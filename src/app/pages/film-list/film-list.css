@@ -1,0 +1,11 @@
+.film-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.film-card {
+  border: 1px solid #ccc;
+  padding: 1rem;
+  border-radius: 4px;
+}

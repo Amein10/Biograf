@@ -1,0 +1,8 @@
+<h2>Aktuelle film</h2>
+
+<div class="film-grid">
+  <article class="film-card" *ngFor="let film of filmListe">
+    <h3>{{ film.titel }} ({{ film.aar }})</h3>
+    <p>{{ film.beskrivelse }}</p>
+  </article>
+</div>
