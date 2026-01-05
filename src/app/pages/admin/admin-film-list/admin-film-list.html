@@ -1,0 +1,29 @@
+<h2>Admin – Filmoversigt</h2>
+
+<a routerLink="/admin/film/create" class="btn-add">➕ Tilføj film</a>
+
+<table class="film-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Titel</th>
+      <th>År</th>
+      <th>Genre</th>
+      <th>Handling</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let film of filmListe">
+      <td>{{ film.id }}</td>
+      <td>{{ film.titel }}</td>
+      <td>{{ film.aar }}</td>
+      <td>{{ film.genre }}</td>
+
+      <td>
+        <a [routerLink]="['/admin/film/edit', film.id]" class="btn-edit">Rediger</a>
+        <button (click)="deleteFilm(film.id)" class="btn-delete">Slet</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

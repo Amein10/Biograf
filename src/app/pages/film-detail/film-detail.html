@@ -1,0 +1,15 @@
+<div *ngIf="film; else notFound" class="film-detail">
+
+  <h2>{{ film.titel }} ({{ film.aar }})</h2>
+
+  <p><strong>Beskrivelse:</strong> {{ film.beskrivelse }}</p>
+  <p><strong>Genre:</strong> {{ film.genre }}</p>
+
+  <button routerLink="/film">Tilbage til film</button>
+
+</div>
+
+<ng-template #notFound>
+  <h2>Film ikke fundet</h2>
+  <button routerLink="/film">Tilbage</button>
+</ng-template>

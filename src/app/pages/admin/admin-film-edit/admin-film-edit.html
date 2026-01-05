@@ -1,0 +1,24 @@
+<h2>✏ Rediger film</h2>
+
+<div *ngIf="film; else notFound" class="form">
+
+  <label>Titel:</label>
+  <input [(ngModel)]="film!.titel" name="titel" required />
+
+  <label>Beskrivelse:</label>
+  <textarea [(ngModel)]="film!.beskrivelse" name="beskrivelse" required></textarea>
+
+  <label>År:</label>
+  <input type="number" [(ngModel)]="film!.aar" name="aar" required />
+
+  <label>Genre:</label>
+  <input [(ngModel)]="film!.genre" name="genre" required />
+
+  <button (click)="saveChanges()" class="btn-save">Gem ændringer</button>
+  <button routerLink="/admin/film" class="btn-cancel">Afbryd</button>
+
+</div>
+
+<ng-template #notFound>
+  <p>⚠ Filmen blev ikke fundet.</p>
+</ng-template>

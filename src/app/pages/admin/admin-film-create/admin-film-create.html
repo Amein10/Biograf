@@ -1,0 +1,19 @@
+<h2>➕ Tilføj ny film</h2>
+
+<form (ngSubmit)="saveFilm()" #filmForm="ngForm" class="form">
+
+  <label>Titel:</label>
+  <input type="text" [(ngModel)]="newFilm.titel" name="titel" required />
+
+  <label>Beskrivelse:</label>
+  <textarea [(ngModel)]="newFilm.beskrivelse" name="beskrivelse" required></textarea>
+
+  <label>År:</label>
+  <input type="number" [(ngModel)]="newFilm.aar" name="aar" required />
+
+  <label>Genre:</label>
+  <input type="text" [(ngModel)]="newFilm.genre" name="genre" required />
+
+  <button type="submit" class="btn-save">Gem film</button>
+  <button type="button" routerLink="/admin/film" class="btn-cancel">Afbryd</button>
+</form>

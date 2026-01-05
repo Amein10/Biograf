@@ -1,0 +1,32 @@
+.film-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.film-table th,
+.film-table td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.btn-add {
+  padding: 6px 12px;
+  background: #4caf50;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.btn-edit {
+  margin-right: 10px;
+}
+
+.btn-delete {
+  padding: 6px 10px;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
