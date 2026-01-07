@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { NgIf } from '@angular/common';
+import { FormsModule, NgForm } from '@angular/forms';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FilmService, Film } from '../../../services/film';
 
 @Component({
   selector: 'app-admin-film-edit',
   standalone: true,
-  imports: [FormsModule, NgIf],
+  imports: [FormsModule, RouterLink],
   templateUrl: './admin-film-edit.html',
-  styleUrl: './admin-film-edit.css'
+  styleUrl: './admin-film-edit.css',
 })
 export class AdminFilmEdit {
-
   film: Film | null = null;
+  error = '';
+  saving = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -21,13 +21,34 @@ export class AdminFilmEdit {
     private filmService: FilmService
   ) {
     const filmId = Number(this.route.snapshot.paramMap.get('id'));
-    this.film = this.filmService.getFilmById(filmId);
+    const found = this.filmService.getFilmById(filmId);
+
+    // kopi så du ikke ændrer listen før "Gem"
+    this.film = found ? { ...found } : null;
   }
 
-  saveChanges() {
+  saveChanges(form: NgForm) {
+    this.error = '';
+
     if (!this.film) return;
 
-    this.filmService.updateFilm(this.film);
-    this.router.navigate(['/admin/film']);
+    if (form.invalid) {
+      this.error = 'Udfyld alle felter.';
+      return;
+    }
+
+    this.saving = true;
+
+    const updated: Film = {
+      ...this.film,
+      titel: this.film.titel.trim(),
+      beskrivelse: this.film.beskrivelse.trim(),
+      genre: this.film.genre.trim(),
+    };
+
+    this.filmService.updateFilm(updated);
+
+    this.saving = false;
+    this.router.navigateByUrl('/admin/film');
   }
 }
