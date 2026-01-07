@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormsModule, NgForm } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { FilmService, Film } from '../../../services/film';
 
 @Component({
   selector: 'app-admin-film-create',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './admin-film-create.html',
   styleUrl: './admin-film-create.css',
 })
 export class AdminFilmCreate {
+  saving = false;
+  error = '';
 
-  // tom film-model til formularen
   newFilm: Film = {
     id: 0,
     titel: '',
@@ -23,13 +24,27 @@ export class AdminFilmCreate {
 
   constructor(private filmService: FilmService, private router: Router) {}
 
-  saveFilm() {
-    // lav unikt id
-    this.newFilm.id = Date.now();
+  saveFilm(form: NgForm) {
+    this.error = '';
 
-    this.filmService.addFilm(this.newFilm);
+    if (form.invalid) {
+      this.error = 'Udfyld alle felter.';
+      return;
+    }
 
-    // redirect tilbage til admin listen
-    this.router.navigate(['/admin/film']);
+    this.saving = true;
+
+    const film: Film = {
+      ...this.newFilm,
+      id: Date.now(),
+      titel: this.newFilm.titel.trim(),
+      beskrivelse: this.newFilm.beskrivelse.trim(),
+      genre: this.newFilm.genre.trim(),
+    };
+
+    this.filmService.addFilm(film);
+
+    this.saving = false;
+    this.router.navigateByUrl('/admin/film');
   }
 }

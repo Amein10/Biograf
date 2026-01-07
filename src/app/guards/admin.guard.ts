@@ -2,12 +2,12 @@ import { CanActivateFn, Router } from '@angular/router';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
-export const adminGuard: CanActivateFn = () => {
+export const adminGuard: CanActivateFn = (route, state) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
   if (!auth.isLoggedIn()) {
-    router.navigateByUrl('/login');
+    router.navigateByUrl(`/login?returnUrl=${encodeURIComponent(state.url)}`);
     return false;
   }
 

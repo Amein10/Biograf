@@ -1,19 +1,41 @@
 <h2>➕ Tilføj ny film</h2>
 
-<form (ngSubmit)="saveFilm()" #filmForm="ngForm" class="form">
+<form (ngSubmit)="saveFilm(filmForm)" #filmForm="ngForm" class="form">
+  <div class="row">
+    <label for="titel">Titel</label>
+    <input id="titel" type="text" [(ngModel)]="newFilm.titel" name="titel" required />
+  </div>
 
-  <label>Titel:</label>
-  <input type="text" [(ngModel)]="newFilm.titel" name="titel" required />
+  <div class="row">
+    <label for="beskrivelse">Beskrivelse</label>
+    <textarea
+      id="beskrivelse"
+      [(ngModel)]="newFilm.beskrivelse"
+      name="beskrivelse"
+      required
+      rows="4"
+    ></textarea>
+  </div>
 
-  <label>Beskrivelse:</label>
-  <textarea [(ngModel)]="newFilm.beskrivelse" name="beskrivelse" required></textarea>
+  <div class="row">
+    <label for="aar">År</label>
+    <input id="aar" type="number" [(ngModel)]="newFilm.aar" name="aar" required />
+  </div>
 
-  <label>År:</label>
-  <input type="number" [(ngModel)]="newFilm.aar" name="aar" required />
+  <div class="row">
+    <label for="genre">Genre</label>
+    <input id="genre" type="text" [(ngModel)]="newFilm.genre" name="genre" required />
+  </div>
 
-  <label>Genre:</label>
-  <input type="text" [(ngModel)]="newFilm.genre" name="genre" required />
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
 
-  <button type="submit" class="btn-save">Gem film</button>
-  <button type="button" routerLink="/admin/film" class="btn-cancel">Afbryd</button>
+  <div class="actions">
+    <button type="submit" class="btn btn-save" [disabled]="filmForm.invalid || saving">
+      @if (saving) { Gemmer... } @else { Gem film }
+    </button>
+
+    <a routerLink="/admin/film" class="btn btn-cancel">Afbryd</a>
+  </div>
 </form>
