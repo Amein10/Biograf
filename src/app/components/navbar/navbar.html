@@ -4,5 +4,17 @@
   </a>
 
   <a routerLink="/film" routerLinkActive="active">Film</a>
-  <a routerLink="/login" routerLinkActive="active">Login</a>
+
+  @if (user()) {
+    <a routerLink="/profile" routerLinkActive="active">Profil</a>
+    <a routerLink="/my-bookings" routerLinkActive="active">Mine bookings</a>
+
+    @if (isAdmin()) {
+      <a routerLink="/admin/film" routerLinkActive="active">Admin</a>
+    }
+
+    <button type="button" (click)="logout()">Log ud</button>
+  } @else {
+    <a routerLink="/login" routerLinkActive="active">Login</a>
+  }
 </nav>
