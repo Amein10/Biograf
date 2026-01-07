@@ -1,20 +1,27 @@
 <nav class="navbar">
-  <a routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+  <a class="brand" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
     BiografWeb
   </a>
 
-  <a routerLink="/film" routerLinkActive="active">Film</a>
+  <div class="links">
+    <a routerLink="/film" routerLinkActive="active">Film</a>
 
-  @if (user()) {
-    <a routerLink="/profile" routerLinkActive="active">Profil</a>
-    <a routerLink="/my-bookings" routerLinkActive="active">Mine bookings</a>
+    @if (user()) {
+      <a routerLink="/profile" routerLinkActive="active">Profil</a>
+      <a routerLink="/my-bookings" routerLinkActive="active">Mine bookings</a>
 
-    @if (isAdmin()) {
-      <a routerLink="/admin/film" routerLinkActive="active">Admin</a>
+      @if (isAdmin()) {
+        <a routerLink="/admin/film" routerLinkActive="active">Admin</a>
+      }
     }
+  </div>
 
-    <button type="button" (click)="logout()">Log ud</button>
-  } @else {
-    <a routerLink="/login" routerLinkActive="active">Login</a>
-  }
+  <div class="actions">
+    @if (user()) {
+      <span class="user">{{ user()!.email }}</span>
+      <button type="button" class="btn" (click)="logout()">Log ud</button>
+    } @else {
+      <a routerLink="/login" routerLinkActive="active">Login</a>
+    }
+  </div>
 </nav>

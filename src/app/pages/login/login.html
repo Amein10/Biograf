@@ -1,1 +1,41 @@
-<p>login works!</p>
+<h2>Login</h2>
+
+<form (ngSubmit)="onSubmit()" #f="ngForm">
+  <div>
+    <label>Email</label><br />
+    <input
+      type="email"
+      name="email"
+      [(ngModel)]="email"
+      required
+      autocomplete="username"
+    />
+  </div>
+
+  <div style="margin-top: 0.75rem;">
+    <label>Password</label><br />
+    <input
+      type="password"
+      name="password"
+      [(ngModel)]="password"
+      required
+      autocomplete="current-password"
+    />
+  </div>
+
+  @if (error) {
+    <p style="color: red; margin-top: 0.75rem;">{{ error }}</p>
+  }
+
+  <button type="submit" style="margin-top: 1rem;" [disabled]="f.invalid">
+    Log ind
+  </button>
+
+  <hr style="margin: 1rem 0;" />
+
+  <p><strong>Mock logins:</strong></p>
+  <ul>
+    <li>Admin: admin@biograf.dk / admin</li>
+    <li>Kunde: kunde@biograf.dk / kunde</li>
+  </ul>
+</form>
