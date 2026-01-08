@@ -1,28 +1,25 @@
 <div class="page">
   <div class="header">
     <div>
-      <h2>Film</h2>
-      <p class="muted">Vælg en film for at se tider og booke sæder.</p>
+      <h2 class="section-title">Film</h2>
+      <p class="section-subtitle">Vælg en film for at se tider og booke sæder.</p>
     </div>
 
-    <div class="search">
-      <input
-        type="text"
-        placeholder="Søg efter titel…"
-        [(ngModel)]="query"
-        (ngModelChange)="onQueryChange($event)"
-        name="query"
-      />
-    </div>
+    <input
+      class="input search"
+      placeholder="Søg efter titel…"
+      [(ngModel)]="query"
+      (ngModelChange)="onQueryChange($event)"
+    />
   </div>
 
   @if (filteredMovies$ | async; as movies) {
     @if (movies.length === 0) {
-      <p>Ingen film matcher din søgning.</p>
+      <div class="card empty">Ingen film matcher søgningen.</div>
     } @else {
       <div class="grid">
         @for (m of movies; track m.id) {
-          <a class="card" [routerLink]="['/film', m.id]">
+          <a class="card movie-card" [routerLink]="['/film', m.id]">
             <div class="title">{{ m.title }}</div>
 
             <div class="meta">
