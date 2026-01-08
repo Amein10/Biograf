@@ -1,0 +1,40 @@
+.page { max-width: 700px; }
+
+.card {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  background: #fff;
+  display: grid;
+  gap: 10px;
+}
+
+input, select {
+  padding: 0.55rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.btn {
+  padding: 0.55rem 0.95rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  color: #222;
+}
+
+.btn.primary {
+  background: #222;
+  color: #fff;
+  border-color: #222;
+}

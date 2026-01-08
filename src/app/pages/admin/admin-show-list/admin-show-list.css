@@ -1,0 +1,65 @@
+.page { max-width: 1000px; }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.filter {
+  margin: 12px 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+select {
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn {
+  padding: 0.45rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #222;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn.primary {
+  background: #222;
+  color: #fff;
+  border-color: #222;
+}
+
+.btn.danger {
+  background: #e74c3c;
+  color: #fff;
+  border-color: #e74c3c;
+}

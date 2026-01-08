@@ -1,0 +1,26 @@
+<div class="page">
+  <h2>➕ Opret tid</h2>
+
+  <form class="card" (ngSubmit)="save()" #f="ngForm">
+    <label>Film</label>
+    <select name="filmId" [(ngModel)]="model.filmId" required>
+      @for (film of films(); track film.id) {
+        <option [value]="film.id">{{ film.titel }}</option>
+      }
+    </select>
+
+    <label>Tid</label>
+    <input type="datetime-local" name="startTime" [(ngModel)]="model.startTime" required />
+
+    <label>Sal</label>
+    <input type="text" name="auditorium" [(ngModel)]="model.auditorium" required />
+
+    <label>Pris</label>
+    <input type="number" name="price" [(ngModel)]="model.price" required />
+
+    <div class="actions">
+      <button class="btn primary" type="submit" [disabled]="f.invalid">Gem</button>
+      <a class="btn" routerLink="/admin/shows">Afbryd</a>
+    </div>
+  </form>
+</div>

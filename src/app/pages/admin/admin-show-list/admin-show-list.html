@@ -1,0 +1,47 @@
+<div class="page">
+  <div class="header">
+    <h2>Admin – Tider (Shows)</h2>
+    <a class="btn primary" routerLink="/admin/shows/create">➕ Opret tid</a>
+  </div>
+
+  <div class="filter">
+    <label>Filtrer på film</label>
+    <select [(ngModel)]="selectedFilmId">
+      <option value="all">Alle</option>
+      @for (f of films(); track f.id) {
+        <option [value]="f.id">{{ f.titel }}</option>
+      }
+    </select>
+  </div>
+
+  @if (shows.length === 0) {
+    <p>Ingen tider fundet.</p>
+  } @else {
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Film</th>
+          <th>Tid</th>
+          <th>Sal</th>
+          <th>Pris</th>
+          <th>Handling</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (s of shows; track s.id) {
+          <tr>
+            <td>{{ filmTitle(s.filmId) }}</td>
+            <td>{{ formatDate(s.startTime) }}</td>
+            <td>{{ s.auditorium }}</td>
+            <td>{{ s.price }} kr</td>
+            <td class="actions">
+              <a class="btn" [routerLink]="['/admin/shows/edit', s.id]">Rediger</a>
+              <button class="btn danger" type="button" (click)="deleteShow(s.id)">Slet</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

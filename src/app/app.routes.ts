@@ -46,5 +46,26 @@ export const routes: Routes = [
     import('./pages/seat-select/seat-select').then(m => m.SeatSelect),
 },
 
+  // ADMIN SHOWS (tider)
+  {
+    path: 'admin/shows',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/admin-show-list/admin-show-list').then(m => m.AdminShowList),
+  },
+  {
+    path: 'admin/shows/create',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/admin-show-create/admin-show-create').then(m => m.AdminShowCreate),
+  },
+  {
+    path: 'admin/shows/edit/:id',
+    canActivate: [adminGuard],
+    loadComponent: () =>
+      import('./pages/admin/admin-show-edit/admin-show-edit').then(m => m.AdminShowEdit),
+  },
+
+
   { path: '**', redirectTo: '' },
 ];
