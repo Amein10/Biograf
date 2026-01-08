@@ -1,23 +1,41 @@
 <div class="page">
   <div class="header">
-    <h2>Film</h2>
+    <div>
+      <h2>Film</h2>
+      <p class="muted">Vælg en film for at se tider og booke sæder.</p>
+    </div>
+
+    <div class="search">
+      <input
+        type="text"
+        placeholder="Søg efter titel…"
+        [(ngModel)]="query"
+        (ngModelChange)="onQueryChange($event)"
+        name="query"
+      />
+    </div>
   </div>
 
-  @if (films$ | async; as films) {
-    @if (films.length === 0) {
-      <p>Ingen film fundet.</p>
+  @if (filteredMovies$ | async; as movies) {
+    @if (movies.length === 0) {
+      <p>Ingen film matcher din søgning.</p>
     } @else {
       <div class="grid">
-        @for (f of films; track f.id) {
-          <a class="card" [routerLink]="['/film', f.id]">
-            <h3>{{ f.titel }}</h3>
-            <div class="muted">{{ f.genre || 'Ukendt genre' }}</div>
-            <div class="muted">{{ f.beskrivelse }}</div>
+        @for (m of movies; track m.id) {
+          <a class="card" [routerLink]="['/film', m.id]">
+            <div class="title">{{ m.title }}</div>
+
+            <div class="meta">
+              <span class="chip">
+                {{ m.genres.length ? m.genres.join(', ') : 'Ukendt genre' }}
+              </span>
+              <span class="chip">Varighed: {{ m.durationMinutes }} min</span>
+            </div>
+
+            <div class="cta">Se detaljer →</div>
           </a>
         }
       </div>
     }
-  } @else {
-    <p>Loader film...</p>
   }
 </div>

@@ -1,34 +1,44 @@
 <div class="header">
   <h2>Admin – Filmoversigt</h2>
+
+  <div class="search">
+    <input
+      type="text"
+      placeholder="Søg…"
+      [(ngModel)]="query"
+      (ngModelChange)="onQueryChange($event)"
+      name="query"
+    />
+  </div>
+
   <a routerLink="/admin/film/create" class="btn-add">➕ Tilføj film</a>
 </div>
 
-@if (filmListe$ | async; as filmListe) {
-  @if (filmListe.length === 0) {
-    <p>Der er ingen film endnu. Opret en ny film.</p>
+@if (filteredMovies$ | async; as movies) {
+  @if (movies.length === 0) {
+    <p>Der er ingen film (eller ingen matcher din søgning).</p>
   } @else {
     <table class="film-table">
       <thead>
         <tr>
           <th>ID</th>
           <th>Titel</th>
-          <th>År</th>
-          <th>Genre</th>
+          <th>Varighed</th>
+          <th>Genrer</th>
           <th>Handling</th>
         </tr>
       </thead>
 
       <tbody>
-        @for (film of filmListe; track film.id) {
+        @for (m of movies; track m.id) {
           <tr>
-            <td>{{ film.id }}</td>
-            <td>{{ film.titel }}</td>
-            <td>{{ film.aar }}</td>
-            <td>{{ film.genre }}</td>
-
+            <td>{{ m.id }}</td>
+            <td>{{ m.title }}</td>
+            <td>{{ m.durationMinutes }} min</td>
+            <td>{{ m.genres.length ? m.genres.join(', ') : '-' }}</td>
             <td class="actions">
-              <a [routerLink]="['/admin/film/edit', film.id]" class="btn-link">Rediger</a>
-              <button type="button" (click)="deleteFilm(film.id)" class="btn-delete">
+              <a [routerLink]="['/admin/film/edit', m.id]" class="btn-link">Rediger</a>
+              <button type="button" (click)="deleteMovie(m.id)" class="btn-delete">
                 Slet
               </button>
             </td>
