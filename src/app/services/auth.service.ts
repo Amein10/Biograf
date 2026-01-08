@@ -1,53 +1,83 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
-export type UserRole = 'Admin' | 'Customer';
+export interface AuthResponseDto {
+  userId: number;
+  username: string;
+  token: string;
+}
+
+export interface LoginDto {
+  username: string;
+  password: string;
+}
+
+export interface RegisterDto {
+  username: string;
+  password: string;
+}
 
 export interface AuthUser {
-  email: string;
-  role: UserRole;
+  userId: number;
+  username: string;
 }
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly key = 'auth_user';
+  private readonly baseUrl = '/api/Auth';
 
-  login(email: string, password: string): boolean {
-    // Mock accounts
-    if (email === 'admin@biograf.dk' && password === 'admin') {
-      this.setUser({ email, role: 'Admin' });
-      return true;
-    }
+  private readonly TOKEN_KEY = 'token';
+  private readonly USER_KEY = 'auth_user';
 
-    if (email === 'kunde@biograf.dk' && password === 'kunde') {
-      this.setUser({ email, role: 'Customer' });
-      return true;
-    }
+  constructor(private http: HttpClient) {}
 
-    return false;
+  login(dto: LoginDto): Observable<AuthResponseDto> {
+    return this.http.post<AuthResponseDto>(`${this.baseUrl}/login`, dto).pipe(
+      tap(res => this.persistAuth(res))
+    );
+  }
+
+  register(dto: RegisterDto): Observable<AuthResponseDto> {
+    return this.http.post<AuthResponseDto>(`${this.baseUrl}/register`, dto).pipe(
+      tap(res => this.persistAuth(res))
+    );
   }
 
   logout(): void {
-    localStorage.removeItem(this.key);
-  }
-
-  getUser(): AuthUser | null {
-    const raw = localStorage.getItem(this.key);
-    return raw ? (JSON.parse(raw) as AuthUser) : null;
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
   }
 
   isLoggedIn(): boolean {
-    return this.getUser() !== null;
+    return !!this.getToken();
   }
 
-  getRole(): UserRole | null {
-    return this.getUser()?.role ?? null;
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  isAdmin(): boolean {
-    return this.getRole() === 'Admin';
+  getUser(): AuthUser | null {
+    const raw = localStorage.getItem(this.USER_KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as AuthUser;
+    } catch {
+      return null;
+    }
   }
 
-  private setUser(user: AuthUser): void {
-    localStorage.setItem(this.key, JSON.stringify(user));
+  /**
+   * Din API sender ikke roles endnu.
+   * Derfor returnerer vi null.
+   * (Du kan senere decode JWT og læse en role-claim her.)
+   */
+  getRole(): string | null {
+    return null;
+  }
+
+  private persistAuth(res: AuthResponseDto): void {
+    localStorage.setItem(this.TOKEN_KEY, res.token);
+    localStorage.setItem(this.USER_KEY, JSON.stringify({ userId: res.userId, username: res.username }));
   }
 }

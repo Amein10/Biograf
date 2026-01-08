@@ -14,6 +14,8 @@ export class Navbar {
   private router = inject(Router);
 
   user = computed(() => this.auth.getUser());
+
+  // Din API har ikke roles -> bliver false (admin links skjules)
   isAdmin = computed(() => this.auth.getRole() === 'Admin');
 
   logout() {

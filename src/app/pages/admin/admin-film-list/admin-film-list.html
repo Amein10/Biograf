@@ -3,34 +3,38 @@
   <a routerLink="/admin/film/create" class="btn-add">➕ Tilføj film</a>
 </div>
 
-@if (filmListe.length === 0) {
-  <p>Der er ingen film endnu. Opret en ny film.</p>
-} @else {
-  <table class="film-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Titel</th>
-        <th>År</th>
-        <th>Genre</th>
-        <th>Handling</th>
-      </tr>
-    </thead>
+@if (filmListe$ | async; as filmListe) {
+  @if (filmListe.length === 0) {
+    <p>Der er ingen film endnu. Opret en ny film.</p>
+  } @else {
+    <table class="film-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titel</th>
+          <th>År</th>
+          <th>Genre</th>
+          <th>Handling</th>
+        </tr>
+      </thead>
 
-    <tbody>
-      <tr *ngFor="let film of filmListe">
-        <td>{{ film.id }}</td>
-        <td>{{ film.titel }}</td>
-        <td>{{ film.aar }}</td>
-        <td>{{ film.genre }}</td>
+      <tbody>
+        @for (film of filmListe; track film.id) {
+          <tr>
+            <td>{{ film.id }}</td>
+            <td>{{ film.titel }}</td>
+            <td>{{ film.aar }}</td>
+            <td>{{ film.genre }}</td>
 
-        <td class="actions">
-          <a [routerLink]="['/admin/film/edit', film.id]" class="btn-link">Rediger</a>
-          <button type="button" (click)="deleteFilm(film.id)" class="btn-delete">
-            Slet
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            <td class="actions">
+              <a [routerLink]="['/admin/film/edit', film.id]" class="btn-link">Rediger</a>
+              <button type="button" (click)="deleteFilm(film.id)" class="btn-delete">
+                Slet
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
 }

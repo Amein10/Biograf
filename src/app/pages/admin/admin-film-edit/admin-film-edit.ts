@@ -21,15 +21,15 @@ export class AdminFilmEdit {
     private filmService: FilmService
   ) {
     const filmId = Number(this.route.snapshot.paramMap.get('id'));
-    const found = this.filmService.getFilmById(filmId);
 
-    // kopi så du ikke ændrer listen før "Gem"
-    this.film = found ? { ...found } : null;
+    this.filmService.getFilmById(filmId).subscribe({
+      next: f => (this.film = { ...f }), // kopi så du ikke ændrer før gem
+      error: () => (this.film = null),
+    });
   }
 
   saveChanges(form: NgForm) {
     this.error = '';
-
     if (!this.film) return;
 
     if (form.invalid) {
@@ -46,9 +46,15 @@ export class AdminFilmEdit {
       genre: this.film.genre.trim(),
     };
 
-    this.filmService.updateFilm(updated);
-
-    this.saving = false;
-    this.router.navigateByUrl('/admin/film');
+    this.filmService.updateFilm(updated).subscribe({
+      next: () => {
+        this.saving = false;
+        this.router.navigateByUrl('/admin/film');
+      },
+      error: () => {
+        this.saving = false;
+        this.error = 'Kunne ikke gemme ændringer.';
+      },
+    });
   }
 }

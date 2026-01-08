@@ -4,25 +4,44 @@
     <a class="btn" routerLink="/film">Find film</a>
   </div>
 
-  @if (bookings.length === 0) {
-    <p>Du har ingen bookings endnu.</p>
+  @if (!user) {
+    <p>Du skal være logget ind for at se dine bookings.</p>
+    <a class="btn" routerLink="/login">Gå til login</a>
   } @else {
-    <div class="list">
-      @for (b of bookings; track b.id) {
-        <div class="card">
-          <div class="title">
-            <strong>{{ b.filmTitle }}</strong>
-            <span class="muted">{{ formatDate(b.startTime) }} · {{ b.auditorium }}</span>
-          </div>
+    @if (bookings$ | async; as bookings) {
+      @if (bookings.length === 0) {
+        <p>Du har ingen bookings endnu.</p>
+      } @else {
+        <div class="list">
+          @for (b of bookings; track b.id) {
+            <div class="card">
+              <div class="title">
+                <strong>{{ b.movieTitle }}</strong>
+                <span class="muted">
+                  {{ formatDate(b.showStartTime) }} · {{ b.auditoriumName }}
+                </span>
+              </div>
 
-          <div><strong>Sæder:</strong> {{ b.seats.join(', ') }}</div>
-          <div class="muted"><strong>Total:</strong> {{ b.totalPrice }} kr</div>
+              <div>
+                <strong>Sæder:</strong> {{ seatsText(b) }}
+              </div>
 
-          <div class="actions">
-            <button type="button" class="btn danger" (click)="deleteBooking(b.id)">Slet</button>
-          </div>
+              @if (b.paymentAmount != null) {
+                <div class="muted">
+                  <strong>Betaling:</strong>
+                  {{ b.paymentAmount }} kr · {{ b.paymentStatus }} · {{ b.paymentMethod }}
+                </div>
+              }
+
+              <div class="actions">
+                <button type="button" class="btn danger" (click)="deleteBooking(b.id)">
+                  Slet
+                </button>
+              </div>
+            </div>
+          }
         </div>
       }
-    </div>
+    }
   }
 </div>

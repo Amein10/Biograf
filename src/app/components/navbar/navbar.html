@@ -24,7 +24,7 @@
 
   <div class="actions">
     @if (user()) {
-      <span class="user">{{ user()!.email }}</span>
+      <span class="user">{{ user()!.username }}</span>
       <button type="button" class="btn" (click)="logout()">Log ud</button>
     } @else {
       <a routerLink="/login" routerLinkActive="active">Login</a>

@@ -11,7 +11,7 @@ describe('Navbar', () => {
         {
           provide: AuthService,
           useValue: {
-            getUser: () => null,
+            getUser: () => ({ userId: 1, username: 'test' }),
             getRole: () => null,
             logout: () => {},
           },

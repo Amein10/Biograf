@@ -1,47 +1,68 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-export interface Show {
+export interface ShowDto {
   id: number;
-  filmId: number;
-  startTime: string;   // ISO string
-  auditorium: string;  // "Sal 1"
-  price: number;       // 95
+  startTime: string;       // ISO string
+  price: number;
+
+  movieId: number;
+  movieTitle: string;
+
+  auditoriumId: number;
+  auditoriumName: string;
+}
+
+export interface CreateShowDto {
+  startTime: string;       // ISO string
+  price: number;
+  movieId: number;
+  auditoriumId: number;
 }
 
 @Injectable({ providedIn: 'root' })
 export class ShowService {
-  private shows: Show[] = [
-    { id: 101, filmId: 1, startTime: '2026-01-10T18:00:00.000Z', auditorium: 'Sal 1', price: 95 },
-    { id: 102, filmId: 1, startTime: '2026-01-10T20:30:00.000Z', auditorium: 'Sal 1', price: 110 },
-    { id: 103, filmId: 2, startTime: '2026-01-11T19:00:00.000Z', auditorium: 'Sal 2', price: 100 },
-    { id: 104, filmId: 3, startTime: '2026-01-12T17:30:00.000Z', auditorium: 'Sal 3', price: 90 },
-  ];
+  private readonly baseUrl = '/api/Shows';
 
-  getAll(): Show[] {
-    return [...this.shows].sort((a, b) => a.startTime.localeCompare(b.startTime));
+  constructor(private http: HttpClient) {}
+
+  /** GET /api/Shows?fromDate=... */
+  getAll(fromDate?: Date): Observable<ShowDto[]> {
+    let params = new HttpParams();
+    if (fromDate) params = params.set('fromDate', fromDate.toISOString());
+    return this.http.get<ShowDto[]>(this.baseUrl, { params });
   }
 
-  getShowsByFilm(filmId: number): Show[] {
-    return this.getAll().filter(s => s.filmId === filmId);
+  /** GET /api/Shows/{id} */
+  getById(id: number): Observable<ShowDto> {
+    return this.http.get<ShowDto>(`${this.baseUrl}/${id}`);
   }
 
-  getShowById(id: number): Show | null {
-    return this.shows.find(s => s.id === id) ?? null;
+  /** GET /api/Shows/movie/{movieId} */
+  getByMovie(movieId: number): Observable<ShowDto[]> {
+    return this.http.get<ShowDto[]>(`${this.baseUrl}/movie/${movieId}`);
   }
 
-  add(show: Show): void {
-    this.shows = [...this.shows, show];
+  /** GET /api/Shows/upcoming?fromDate=... */
+  getUpcoming(fromDate?: Date): Observable<ShowDto[]> {
+    let params = new HttpParams();
+    if (fromDate) params = params.set('fromDate', fromDate.toISOString());
+    return this.http.get<ShowDto[]>(`${this.baseUrl}/upcoming`, { params });
   }
 
-  update(show: Show): void {
-    this.shows = this.shows.map(s => (s.id === show.id ? show : s));
+  /** POST /api/Shows */
+  create(dto: CreateShowDto): Observable<ShowDto> {
+    return this.http.post<ShowDto>(this.baseUrl, dto);
   }
 
-  delete(id: number): void {
-    this.shows = this.shows.filter(s => s.id !== id);
+  /** PUT /api/Shows/{id} */
+  update(id: number, dto: CreateShowDto): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/${id}`, dto);
   }
 
-  nextId(): number {
-    return Math.max(0, ...this.shows.map(s => s.id)) + 1;
+  /** DELETE /api/Shows/{id} */
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

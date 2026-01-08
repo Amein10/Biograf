@@ -1,13 +1,16 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { FilmService } from '../../../services/film';
-import { ShowService, Show } from '../../../services/show.service';
+import { Observable } from 'rxjs';
+
+import { FilmService, Film } from '../../../services/film';
+import { ShowService, CreateShowDto } from '../../../services/show.service';
 
 @Component({
   selector: 'app-admin-show-create',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, AsyncPipe], // ✅ AsyncPipe her
   templateUrl: './admin-show-create.html',
   styleUrl: './admin-show-create.css',
 })
@@ -16,26 +19,26 @@ export class AdminShowCreate {
   private showService = inject(ShowService);
   private router = inject(Router);
 
-  films = computed(() => this.filmService.getFilms());
+  films$: Observable<Film[]> = this.filmService.getFilms();
 
-  model: Omit<Show, 'id'> = {
-    filmId: 1,
-    startTime: new Date().toISOString().slice(0, 16), // yyyy-MM-ddTHH:mm
-    auditorium: 'Sal 1',
+  model: CreateShowDto = {
+    movieId: 1,
+    auditoriumId: 1,
+    startTime: new Date().toISOString().slice(0, 16), // datetime-local
     price: 95,
   };
 
   save() {
-    const show: Show = {
-      id: this.showService.nextId(),
-      filmId: Number(this.model.filmId),
-      // datetime-local → ISO
+    const payload: CreateShowDto = {
+      movieId: Number(this.model.movieId),
+      auditoriumId: Number(this.model.auditoriumId),
       startTime: new Date(this.model.startTime).toISOString(),
-      auditorium: this.model.auditorium.trim(),
       price: Number(this.model.price),
     };
 
-    this.showService.add(show);
-    this.router.navigateByUrl('/admin/shows');
+    this.showService.create(payload).subscribe({
+      next: () => this.router.navigateByUrl('/admin/shows'),
+      error: () => alert('Kunne ikke oprette show. Tjek at API kører og payload matcher.'),
+    });
   }
 }

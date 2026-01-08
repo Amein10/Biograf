@@ -3,17 +3,19 @@
 
   <form class="card" (ngSubmit)="save()" #f="ngForm">
     <label>Film</label>
-    <select name="filmId" [(ngModel)]="model.filmId" required>
-      @for (film of films(); track film.id) {
-        <option [value]="film.id">{{ film.titel }}</option>
+    <select name="movieId" [(ngModel)]="model.movieId" required>
+      @if (films$ | async; as films) {
+        @for (film of films; track film.id) {
+          <option [value]="film.id">{{ film.titel }}</option>
+        }
       }
     </select>
 
     <label>Tid</label>
     <input type="datetime-local" name="startTime" [(ngModel)]="model.startTime" required />
 
-    <label>Sal</label>
-    <input type="text" name="auditorium" [(ngModel)]="model.auditorium" required />
+    <label>Sal (Auditorium ID)</label>
+    <input type="number" name="auditoriumId" [(ngModel)]="model.auditoriumId" required />
 
     <label>Pris</label>
     <input type="number" name="price" [(ngModel)]="model.price" required />

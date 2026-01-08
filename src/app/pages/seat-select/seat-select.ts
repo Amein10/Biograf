@@ -1,16 +1,19 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { FilmService } from '../../services/film';
-import { ShowService, Show } from '../../services/show.service';
-import { BookingService, Booking } from '../../services/booking.service';
+import { Observable } from 'rxjs';
 
-type Seat = { code: string; isBooked: boolean; isSelected: boolean };
+import { AuthService } from '../../services/auth.service';
+import { ShowService } from '../../services/show.service';
+import { BookingService } from '../../services/booking.service';
+import { ShowDto } from '../../services/api-dtos';
+
+type Seat = { seatId: number; code: string; isSelected: boolean };
 
 @Component({
   selector: 'app-seat-select',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AsyncPipe],
   templateUrl: './seat-select.html',
   styleUrl: './seat-select.css',
 })
@@ -19,102 +22,90 @@ export class SeatSelect {
   private router = inject(Router);
   private auth = inject(AuthService);
   private showService = inject(ShowService);
-  private filmService = inject(FilmService);
   private bookingService = inject(BookingService);
 
   showId = Number(this.route.snapshot.paramMap.get('showId'));
-  show: Show | null = this.showService.getShowById(this.showId);
+  show$: Observable<ShowDto> = this.showService.getById(this.showId);
 
-  // find film title
-  filmTitle = this.show ? (this.filmService.getFilmById(this.show.filmId)?.titel ?? 'Ukendt film') : 'Ukendt film';
-
-  // seat grid config
+  // mock seats (indtil vi har Seat endpoints)
   rows = ['A', 'B', 'C', 'D', 'E', 'F'];
   cols = Array.from({ length: 10 }, (_, i) => i + 1);
 
-  selected = new Set<string>();
-
-  bookedSeats = new Set<string>(
-    this.bookingService.getBookedSeatsForShow(this.showId)
-  );
-
+  selected = new Set<number>(); // seatId
   seats: Seat[] = [];
 
   constructor() {
     this.buildSeats();
   }
 
-  userEmail = computed(() => this.auth.getUser()?.email ?? '');
-
   private buildSeats() {
     const all: Seat[] = [];
+    let seatId = 1;
+
     for (const r of this.rows) {
       for (const c of this.cols) {
         const code = `${r}${c}`;
         all.push({
+          seatId,
           code,
-          isBooked: this.bookedSeats.has(code),
-          isSelected: this.selected.has(code),
+          isSelected: this.selected.has(seatId),
         });
+        seatId++;
       }
     }
+
     this.seats = all;
   }
 
-  toggleSeat(code: string) {
-    if (this.bookedSeats.has(code)) return;
-
-    if (this.selected.has(code)) this.selected.delete(code);
-    else this.selected.add(code);
+  toggleSeat(seatId: number) {
+    if (this.selected.has(seatId)) this.selected.delete(seatId);
+    else this.selected.add(seatId);
 
     this.buildSeats();
   }
 
-  get selectedList(): string[] {
-    return Array.from(this.selected).sort();
+  get selectedCount(): number {
+    return this.selected.size;
   }
 
-  get totalPrice(): number {
-    if (!this.show) return 0;
-    return this.selectedList.length * this.show.price;
+  selectedCodesText(): string {
+    const codes = this.seats
+      .filter(seat => this.selected.has(seat.seatId))
+      .map(seat => seat.code)
+      .sort();
+    return codes.length ? codes.join(', ') : '-';
   }
 
-  confirmBooking() {
-    const email = this.userEmail();
-    if (!email) return;
-
-    if (!this.show) return;
-    if (this.selectedList.length === 0) return;
-
-    // sikkerhed: check igen om nogle seats blev booket imens (mock, men fint)
-    for (const s of this.selectedList) {
-      if (this.bookedSeats.has(s)) {
-        alert('Et af dine sæder er allerede booket. Prøv igen.');
-        return;
-      }
+  confirmBooking(show: ShowDto) {
+    if (!this.auth.isLoggedIn()) {
+      alert('Du skal logge ind for at booke.');
+      this.router.navigateByUrl(
+        `/login?returnUrl=${encodeURIComponent(this.router.url)}`
+      );
+      return;
     }
 
-    const booking: Booking = {
-      id: crypto.randomUUID(),
-      userEmail: email,
-      showId: this.show.id,
-      filmId: this.show.filmId,
-      filmTitle: this.filmTitle,
-      startTime: this.show.startTime,
-      auditorium: this.show.auditorium,
-      seats: this.selectedList,
-      totalPrice: this.totalPrice,
-      createdAt: new Date().toISOString(),
-    };
+    const seatIds = Array.from(this.selected.values()).sort((a, b) => a - b);
+    if (seatIds.length === 0) return;
 
-    this.bookingService.add(booking);
-
-    alert('Booking gemt!');
-    this.router.navigateByUrl('/my-bookings');
+    this.bookingService.create({ showId: show.id, seatIds }).subscribe({
+      next: () => {
+        alert('Booking oprettet!');
+        this.router.navigateByUrl('/my-bookings');
+      },
+      error: () =>
+        alert('Kunne ikke oprette booking. Er du logget ind, og kører API?'),
+    });
   }
 
   formatDate(iso: string): string {
     const d = new Date(iso);
-    return d.toLocaleString('da-DK', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleString('da-DK', {
+      weekday: 'short',
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   }
 }

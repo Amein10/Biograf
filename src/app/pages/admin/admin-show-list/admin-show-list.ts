@@ -1,13 +1,16 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { FilmService } from '../../../services/film';
-import { ShowService, Show } from '../../../services/show.service';
+import { AsyncPipe } from '@angular/common';
+import { Observable } from 'rxjs';
+
+import { FilmService, Film } from '../../../services/film';
+import { ShowService, ShowDto } from '../../../services/show.service';
 
 @Component({
   selector: 'app-admin-show-list',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, AsyncPipe], // ✅ AsyncPipe SKAL være her
   templateUrl: './admin-show-list.html',
   styleUrl: './admin-show-list.css',
 })
@@ -15,16 +18,13 @@ export class AdminShowList {
   private filmService = inject(FilmService);
   private showService = inject(ShowService);
 
-  films = computed(() => this.filmService.getFilms());
-  selectedFilmId: number | 'all' = 'all';
+  films$: Observable<Film[]> = this.filmService.getFilms();
 
-  get shows(): Show[] {
-    if (this.selectedFilmId === 'all') return this.showService.getAll();
-    return this.showService.getShowsByFilm(this.selectedFilmId);
-  }
+  selectedMovieId: number | 'all' = 'all';
 
-  filmTitle(filmId: number): string {
-    return this.filmService.getFilmById(filmId)?.titel ?? `Film #${filmId}`;
+  get shows$(): Observable<ShowDto[]> {
+    if (this.selectedMovieId === 'all') return this.showService.getAll();
+    return this.showService.getByMovie(this.selectedMovieId);
   }
 
   formatDate(iso: string): string {
@@ -40,6 +40,12 @@ export class AdminShowList {
 
   deleteShow(id: number) {
     if (!confirm('Slet denne tid?')) return;
-    this.showService.delete(id);
+
+    this.showService.delete(id).subscribe({
+      next: () => {
+        // hvis du vil "refresh" listen med det samme, kan vi lave en Subject senere
+      },
+      error: () => alert('Kunne ikke slette show.'),
+    });
   }
 }

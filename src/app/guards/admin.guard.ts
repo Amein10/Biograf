@@ -11,8 +11,7 @@ export const adminGuard: CanActivateFn = (route, state) => {
     return false;
   }
 
-  if (auth.getRole() === 'Admin') return true;
-
-  router.navigateByUrl('/');
-  return false;
+  // Midlertidigt: alle loggede ind må se admin,
+  // fordi API ikke har roles endnu.
+  return true;
 };

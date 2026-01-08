@@ -1,48 +1,25 @@
 import { Injectable } from '@angular/core';
-
-export interface Booking {
-  id: string;
-  userEmail: string;
-  showId: number;
-  filmId: number;
-  filmTitle: string;
-  startTime: string;
-  auditorium: string;
-  seats: string[];
-  totalPrice: number;
-  createdAt: string;
-}
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { API_BASE } from './api';
+import { BookingDto, CreateBookingDto } from './api-dtos';
 
 @Injectable({ providedIn: 'root' })
 export class BookingService {
-  private readonly key = 'bookings';
+  constructor(private http: HttpClient) {}
 
-  getAll(): Booking[] {
-    const raw = localStorage.getItem(this.key);
-    return raw ? (JSON.parse(raw) as Booking[]) : [];
+  /** GET /api/bookings/me (kræver Bearer token) */
+  getForMe(): Observable<BookingDto[]> {
+    return this.http.get<BookingDto[]>(`${API_BASE}/bookings/me`);
   }
 
-  getForUser(email: string): Booking[] {
-    return this.getAll()
-      .filter(b => b.userEmail === email)
-      .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  /** POST /api/bookings (kræver Bearer token) */
+  create(dto: CreateBookingDto): Observable<BookingDto> {
+    return this.http.post<BookingDto>(`${API_BASE}/bookings`, dto);
   }
 
-  getBookedSeatsForShow(showId: number): string[] {
-    const seats = this.getAll()
-      .filter(b => b.showId === showId)
-      .flatMap(b => b.seats);
-    return Array.from(new Set(seats));
-  }
-
-  add(booking: Booking): void {
-    const all = this.getAll();
-    localStorage.setItem(this.key, JSON.stringify([booking, ...all]));
-  }
-
-  delete(bookingId: string, userEmail: string): void {
-    const all = this.getAll();
-    const next = all.filter(b => !(b.id === bookingId && b.userEmail === userEmail));
-    localStorage.setItem(this.key, JSON.stringify(next));
+  /** DELETE /api/bookings/{id} (kræver Bearer token) */
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${API_BASE}/bookings/${id}`);
   }
 }

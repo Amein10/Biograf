@@ -3,11 +3,11 @@
 
   @if (user()) {
     <div class="card">
-      <p><strong>Email:</strong> {{ user()!.email }}</p>
-      <p><strong>Rolle:</strong> {{ user()!.role }}</p>
+      <p><strong>Brugernavn:</strong> {{ user()!.username }}</p>
+      <p><strong>UserId:</strong> {{ user()!.userId }}</p>
 
       <p class="hint">
-        (Senere kan du lave “rediger bruger” her – fx navn, email, password)
+        (Senere kan du lave “rediger bruger” her – fx password, m.m.)
       </p>
 
       <a class="btn" routerLink="/film">Gå til film</a>

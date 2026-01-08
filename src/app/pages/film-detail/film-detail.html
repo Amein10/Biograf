@@ -1,5 +1,5 @@
 <div class="page">
-  @if (film) {
+  @if (film$ | async; as film) {
     <section class="film-detail">
       <div class="top">
         <div>
@@ -14,23 +14,25 @@
 
       <h3>Tider</h3>
 
-      @if (shows.length === 0) {
-        <p>Ingen tider endnu.</p>
-      } @else {
-        <div class="shows">
-          @for (s of shows; track s.id) {
-            <div class="show-card">
-              <div>
-                <div class="show-time">{{ formatDate(s.startTime) }}</div>
-                <div class="muted">{{ s.auditorium }} · {{ s.price }} kr</div>
-              </div>
+      @if (shows$ | async; as shows) {
+        @if (shows.length === 0) {
+          <p>Ingen tider endnu.</p>
+        } @else {
+          <div class="shows">
+            @for (s of shows; track s.id) {
+              <div class="show-card">
+                <div>
+                  <div class="show-time">{{ formatDate(s.startTime) }}</div>
+                  <div class="muted">{{ s.auditoriumName }} · {{ s.price }} kr</div>
+                </div>
 
-              <a class="btn primary" [routerLink]="['/shows', s.id, 'seats']">
-                Vælg sæder
-              </a>
-            </div>
-          }
-        </div>
+                <a class="btn primary" [routerLink]="['/shows', s.id, 'seats']">
+                  Vælg sæder
+                </a>
+              </div>
+            }
+          </div>
+        }
       }
     </section>
   } @else {

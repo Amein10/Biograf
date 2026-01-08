@@ -17,7 +17,7 @@ export class AdminFilmCreate {
   newFilm: Film = {
     id: 0,
     titel: '',
-    beskrivelse: '',
+    beskrivelse: 'Varighed: 120 min', // FilmService.toApi() læser varighed herfra
     aar: new Date().getFullYear(),
     genre: '',
   };
@@ -26,7 +26,6 @@ export class AdminFilmCreate {
 
   saveFilm(form: NgForm) {
     this.error = '';
-
     if (form.invalid) {
       this.error = 'Udfyld alle felter.';
       return;
@@ -36,15 +35,21 @@ export class AdminFilmCreate {
 
     const film: Film = {
       ...this.newFilm,
-      id: Date.now(),
       titel: this.newFilm.titel.trim(),
       beskrivelse: this.newFilm.beskrivelse.trim(),
       genre: this.newFilm.genre.trim(),
     };
 
-    this.filmService.addFilm(film);
-
-    this.saving = false;
-    this.router.navigateByUrl('/admin/film');
+    // ✅ FilmService.addFilm returnerer Observable -> subscribe
+    this.filmService.addFilm(film).subscribe({
+      next: () => {
+        this.saving = false;
+        this.router.navigateByUrl('/admin/film');
+      },
+      error: () => {
+        this.saving = false;
+        this.error = 'Kunne ikke oprette filmen. Tjek at API kører og payload matcher.';
+      },
+    });
   }
 }

@@ -3,21 +3,20 @@
     <h2>Aktuelle film</h2>
   </div>
 
-  @if (filmListe.length === 0) {
+  @if (loading) {
+    <p>Henter film…</p>
+  } @else if (error) {
+    <p style="color:red;">{{ error }}</p>
+  } @else if (filmListe.length === 0) {
     <p>Der er ingen film at vise.</p>
   } @else {
     <div class="film-grid">
       @for (film of filmListe; track film.id) {
         <article class="film-card">
           <a class="card-link" [routerLink]="['/film', film.id]">
-            <h3>
-              {{ film.titel }}
-              <span class="muted">({{ film.aar }})</span>
-            </h3>
-
+            <h3>{{ film.titel }} <span class="muted">({{ film.aar }})</span></h3>
             <p class="desc">{{ film.beskrivelse }}</p>
             <small class="muted">Genre: {{ film.genre }}</small>
-
             <div class="cta">Se detaljer →</div>
           </a>
         </article>

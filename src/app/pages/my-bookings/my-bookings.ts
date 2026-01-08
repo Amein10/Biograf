@@ -1,12 +1,15 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { Observable, of } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
-import { BookingService, Booking } from '../../services/booking.service';
+import { BookingService } from '../../services/booking.service';
+import { BookingDto, BookingSeatDto } from '../../services/api-dtos';
 
 @Component({
   selector: 'app-my-bookings',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, AsyncPipe],
   templateUrl: './my-bookings.html',
   styleUrl: './my-bookings.css',
 })
@@ -14,26 +17,37 @@ export class MyBookings {
   private auth = inject(AuthService);
   private bookingService = inject(BookingService);
 
-  userEmail = computed(() => this.auth.getUser()?.email ?? '');
+  user = this.auth.getUser();
 
-  get bookings(): Booking[] {
-    const email = this.userEmail();
-    if (!email) return [];
-    return this.bookingService.getForUser(email);
-  }
+  bookings$: Observable<BookingDto[]> = this.user
+    ? this.bookingService.getForMe()
+    : of([]);
 
-  deleteBooking(id: string) {
-    const email = this.userEmail();
-    if (!email) return;
-
+  deleteBooking(id: number) {
     const ok = confirm('Slet booking?');
     if (!ok) return;
 
-    this.bookingService.delete(id, email);
+    this.bookingService.delete(id).subscribe({
+      next: () => {
+        this.bookings$ = this.bookingService.getForMe();
+      },
+      error: () => alert('Kunne ikke slette booking.'),
+    });
   }
 
   formatDate(iso: string): string {
     const d = new Date(iso);
-    return d.toLocaleString('da-DK', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleString('da-DK', {
+      weekday: 'short',
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  seatsText(b: BookingDto): string {
+    if (!b.seats || b.seats.length === 0) return '-';
+    return b.seats.map((s: BookingSeatDto) => `${s.row}${s.number}`).join(', ');
   }
 }

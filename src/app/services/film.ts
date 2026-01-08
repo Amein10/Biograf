@@ -1,4 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { map, Observable } from 'rxjs';
+import { API_BASE } from './api';
 
 export interface Film {
   id: number;
@@ -8,33 +11,76 @@ export interface Film {
   genre: string;
 }
 
+/** API DTO (det din .NET API sender lige nu) */
+interface MovieApiDto {
+  id: number;
+  title: string;
+  durationMinutes: number;
+  genres: string[];
+}
+
 @Injectable({ providedIn: 'root' })
 export class FilmService {
-  private readonly _films = signal<Film[]>([
-    { id: 1, titel: 'Inception', beskrivelse: 'Drømme i flere lag.', aar: 2010, genre: 'Sci-fi' },
-    { id: 2, titel: 'The Dark Knight', beskrivelse: 'Batman mod Joker.', aar: 2008, genre: 'Action' },
-    { id: 3, titel: 'Interstellar', beskrivelse: 'Rejse gennem rummet.', aar: 2014, genre: 'Sci-fi' },
-    { id: 4, titel: 'Parasite', beskrivelse: 'En mørk komedie om klasseforskel.', aar: 2019, genre: 'Drama' },
-    { id: 5, titel: 'Toy Story', beskrivelse: 'Legetøj med følelser og eventyr.', aar: 1995, genre: 'Animation' },
-  ]);
+  constructor(private http: HttpClient) {}
 
-  getFilms(): Film[] {
-    return this._films();
+  /** GET /api/movies */
+  getFilms(): Observable<Film[]> {
+    return this.http.get<MovieApiDto[]>(`${API_BASE}/movies`).pipe(
+      map(list => list.map(m => this.fromApi(m)))
+    );
   }
 
-  getFilmById(id: number): Film | null {
-    return this._films().find(f => f.id === id) ?? null;
+  /** GET /api/movies/{id} */
+  getFilmById(id: number): Observable<Film> {
+    return this.http.get<MovieApiDto>(`${API_BASE}/movies/${id}`).pipe(
+      map(m => this.fromApi(m))
+    );
   }
 
-  addFilm(film: Film): void {
-    this._films.update(list => [...list, film]);
+  /** POST /api/movies  (du skal have et endpoint i API'et der matcher) */
+  addFilm(film: Film): Observable<Film> {
+    const payload = this.toApi(film);
+    return this.http.post<MovieApiDto>(`${API_BASE}/movies`, payload).pipe(
+      map(m => this.fromApi(m))
+    );
   }
 
-  updateFilm(film: Film): void {
-    this._films.update(list => list.map(f => (f.id === film.id ? film : f)));
+  /** PUT /api/movies/{id} */
+  updateFilm(film: Film): Observable<void> {
+    const payload = this.toApi(film);
+    return this.http.put<void>(`${API_BASE}/movies/${film.id}`, payload);
   }
 
-  deleteFilm(id: number): void {
-    this._films.update(list => list.filter(f => f.id !== id));
+  /** DELETE /api/movies/{id} */
+  deleteFilm(id: number): Observable<void> {
+    return this.http.delete<void>(`${API_BASE}/movies/${id}`);
+  }
+
+  // ----------------- mapping -----------------
+
+  private fromApi(m: MovieApiDto): Film {
+    return {
+      id: m.id,
+      titel: m.title,
+      beskrivelse: `Varighed: ${m.durationMinutes} min`,
+      aar: new Date().getFullYear(),          // API har ikke "year" i dit screenshot
+      genre: (m.genres ?? []).join(', '),
+    };
+  }
+
+  private toApi(f: Film) {
+    // Dit API har måske en CreateMovieDto med andre felter.
+    // Tilpas hvis din API kræver flere felter.
+    return {
+      title: f.titel,
+      durationMinutes: this.extractDurationFromDescription(f.beskrivelse) ?? 120,
+      genres: f.genre ? f.genre.split(',').map(x => x.trim()).filter(Boolean) : [],
+    };
+  }
+
+  private extractDurationFromDescription(desc: string): number | null {
+    // hvis beskrivelse fx "Varighed: 169 min"
+    const match = desc.match(/(\d+)\s*min/i);
+    return match ? Number(match[1]) : null;
   }
 }

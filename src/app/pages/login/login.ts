@@ -15,7 +15,7 @@ export class Login {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  email = '';
+  username = '';
   password = '';
   error = '';
   loading = false;
@@ -24,30 +24,21 @@ export class Login {
     this.error = '';
     this.loading = true;
 
-    const ok = this.auth.login(this.email.trim(), this.password);
-
-    if (!ok) {
-      this.loading = false;
-      this.error = 'Forkert email eller password';
-      return;
-    }
-
-    // Hvis guards har sendt os hertil med returnUrl, så brug den
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-
-    if (returnUrl) {
-      this.loading = false;
-      this.router.navigateByUrl(returnUrl);
-      return;
-    }
-
-    // Ellers redirect baseret på rolle
-    if (this.auth.getRole() === 'Admin') {
-      this.loading = false;
-      this.router.navigateByUrl('/admin/film');
-    } else {
-      this.loading = false;
-      this.router.navigateByUrl('/film');
-    }
+    this.auth
+      .login({
+        username: this.username.trim(),
+        password: this.password,
+      })
+      .subscribe({
+        next: () => {
+          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+          this.loading = false;
+          this.router.navigateByUrl(returnUrl || '/film');
+        },
+        error: () => {
+          this.loading = false;
+          this.error = 'Forkert brugernavn eller password';
+        },
+      });
   }
 }

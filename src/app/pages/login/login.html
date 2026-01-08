@@ -3,11 +3,11 @@
 
   <form (ngSubmit)="onSubmit()" #f="ngForm" class="card">
     <div class="row">
-      <label>Email</label>
+      <label>Brugernavn</label>
       <input
-        type="email"
-        name="email"
-        [(ngModel)]="email"
+        type="text"
+        name="username"
+        [(ngModel)]="username"
         required
         autocomplete="username"
       />
@@ -35,11 +35,7 @@
     <hr />
 
     <div class="mock">
-      <p><strong>Mock logins:</strong></p>
-      <ul>
-        <li>Admin: admin@biograf.dk / admin</li>
-        <li>Kunde: kunde@biograf.dk / kunde</li>
-      </ul>
+      <p><strong>Tip:</strong> Brug de users du har registreret i API’et (Auth/register).</p>
     </div>
   </form>
 </div>
