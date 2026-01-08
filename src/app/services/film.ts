@@ -8,42 +8,33 @@ export interface Film {
   genre: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class FilmService {
-
-  // signal holder vores film-liste i memory
   private readonly _films = signal<Film[]>([
     { id: 1, titel: 'Inception', beskrivelse: 'Drømme i flere lag.', aar: 2010, genre: 'Sci-fi' },
     { id: 2, titel: 'The Dark Knight', beskrivelse: 'Batman mod Joker.', aar: 2008, genre: 'Action' },
-    { id: 3, titel: 'Interstellar', beskrivelse: 'Rejse gennem rummet.', aar: 2014, genre: 'Sci-fi' }
+    { id: 3, titel: 'Interstellar', beskrivelse: 'Rejse gennem rummet.', aar: 2014, genre: 'Sci-fi' },
+    { id: 4, titel: 'Parasite', beskrivelse: 'En mørk komedie om klasseforskel.', aar: 2019, genre: 'Drama' },
+    { id: 5, titel: 'Toy Story', beskrivelse: 'Legetøj med følelser og eventyr.', aar: 1995, genre: 'Animation' },
   ]);
 
-  // hent ALLE film
-  getFilms() {
+  getFilms(): Film[] {
     return this._films();
   }
 
-  // hent film efter id
-  getFilmById(id: number) {
+  getFilmById(id: number): Film | null {
     return this._films().find(f => f.id === id) ?? null;
   }
 
-  // ▶ CRUD (til senere admin sider)
-  addFilm(film: Film) {
+  addFilm(film: Film): void {
     this._films.update(list => [...list, film]);
   }
 
-  updateFilm(film: Film) {
-    this._films.update(list =>
-      list.map(f => f.id === film.id ? film : f)
-    );
+  updateFilm(film: Film): void {
+    this._films.update(list => list.map(f => (f.id === film.id ? film : f)));
   }
 
-  deleteFilm(id: number) {
-    this._films.update(list =>
-      list.filter(f => f.id !== id)
-    );
+  deleteFilm(id: number): void {
+    this._films.update(list => list.filter(f => f.id !== id));
   }
 }

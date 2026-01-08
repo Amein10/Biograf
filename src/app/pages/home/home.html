@@ -1,4 +1,30 @@
-<h1>Velkommen til BiografWeb</h1>
-<p>Her kan du se vores aktuelle film og logge ind på din bruger.</p>
+<div class="home">
+  <section class="hero">
+    <h1>Velkommen til BiografWeb</h1>
+    <p>Her kan du se aktuelle film, vælge en tid og reservere sæder.</p>
 
-<a routerLink="/film">Se alle film</a>
+    <div class="actions">
+      <a class="btn primary" routerLink="/film">Se alle film</a>
+
+      @if (!isLoggedIn()) {
+        <a class="btn" routerLink="/login">Log ind</a>
+      } @else {
+        <a class="btn" routerLink="/profile">Min profil</a>
+
+        @if (isAdmin()) {
+          <a class="btn" routerLink="/admin/film">Admin</a>
+        }
+      }
+    </div>
+  </section>
+
+  <section class="info">
+    <h3>Hvordan fungerer det?</h3>
+    <ol>
+      <li>Vælg en film</li>
+      <li>Vælg en tid</li>
+      <li>Vælg dine sæder</li>
+      <li>Bekræft booking</li>
+    </ol>
+  </section>
+</div>

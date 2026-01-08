@@ -43,6 +43,10 @@ export class AuthService {
     return this.getUser()?.role ?? null;
   }
 
+  isAdmin(): boolean {
+    return this.getRole() === 'Admin';
+  }
+
   private setUser(user: AuthUser): void {
     localStorage.setItem(this.key, JSON.stringify(user));
   }

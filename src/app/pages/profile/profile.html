@@ -1,0 +1,19 @@
+<div class="page">
+  <h2>Min profil</h2>
+
+  @if (user()) {
+    <div class="card">
+      <p><strong>Email:</strong> {{ user()!.email }}</p>
+      <p><strong>Rolle:</strong> {{ user()!.role }}</p>
+
+      <p class="hint">
+        (Senere kan du lave “rediger bruger” her – fx navn, email, password)
+      </p>
+
+      <a class="btn" routerLink="/film">Gå til film</a>
+    </div>
+  } @else {
+    <p>Du er ikke logget ind.</p>
+    <a class="btn" routerLink="/login">Gå til login</a>
+  }
+</div>

@@ -3,16 +3,14 @@ import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-profile',
   standalone: true,
   imports: [RouterLink],
-  templateUrl: './home.html',
-  styleUrl: './home.css',
+  templateUrl: './profile.html',
+  styleUrl: './profile.css',
 })
-export class Home {
+export class Profile {
   private auth = inject(AuthService);
 
   user = computed(() => this.auth.getUser());
-  isLoggedIn = computed(() => this.auth.isLoggedIn());
-  isAdmin = computed(() => this.auth.getRole() === 'Admin');
 }

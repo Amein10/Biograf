@@ -1,13 +1,60 @@
-form {
-  max-width: 360px;
+.login-page {
+  max-width: 420px;
+}
+
+.card {
+  margin-top: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  background: #fff;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 input {
   width: 100%;
-  padding: 0.5rem;
+  padding: 0.55rem;
   box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 
-button {
-  padding: 0.5rem 1rem;
+.btn {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #fff;
+}
+
+.btn.primary {
+  background: #222;
+  color: #fff;
+  border-color: #222;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: #b00020;
+  margin: 0 0 10px 0;
+}
+
+hr {
+  margin: 14px 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+.mock {
+  opacity: 0.9;
 }
