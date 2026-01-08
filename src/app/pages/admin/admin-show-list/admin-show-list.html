@@ -1,12 +1,12 @@
 <div class="page">
   <div class="header">
-    <h2>Admin – Tider (Shows)</h2>
+    <h2>Admin – Tider</h2>
     <a class="btn primary" routerLink="/admin/shows/create">➕ Opret tid</a>
   </div>
 
   <div class="filter">
-    <label>Filtrer på film</label>
-    <select [(ngModel)]="selectedFilmId">
+    <label>Filtrer på film:</label>
+    <select [(ngModel)]="selectedFilmId" name="filmFilter">
       <option value="all">Alle</option>
       @for (f of films(); track f.id) {
         <option [value]="f.id">{{ f.titel }}</option>

@@ -1,17 +1,18 @@
-.page { max-width: 1000px; }
+.page { max-width: 1000px; margin: 0 auto; }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+  margin-bottom: 12px;
 }
 
 .filter {
-  margin: 12px 0;
   display: flex;
   gap: 10px;
   align-items: center;
+  margin-bottom: 12px;
 }
 
 select {
@@ -36,11 +37,7 @@ th, td {
   text-align: left;
 }
 
-.actions {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-}
+.actions { display: flex; gap: 8px; align-items: center; }
 
 .btn {
   padding: 0.45rem 0.8rem;

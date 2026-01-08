@@ -29,6 +29,7 @@ export class AdminShowCreate {
     const show: Show = {
       id: this.showService.nextId(),
       filmId: Number(this.model.filmId),
+      // datetime-local → ISO
       startTime: new Date(this.model.startTime).toISOString(),
       auditorium: this.model.auditorium.trim(),
       price: Number(this.model.price),

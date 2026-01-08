@@ -1,5 +1,10 @@
 <nav class="navbar">
-  <a class="brand" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+  <a
+    class="brand"
+    routerLink=""
+    routerLinkActive="active"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
     BiografWeb
   </a>
 
@@ -11,9 +16,9 @@
       <a routerLink="/my-bookings" routerLinkActive="active">Mine bookings</a>
 
       @if (isAdmin()) {
-        <a routerLink="/admin/film" routerLinkActive="active">Admin</a>
+        <a routerLink="/admin/film" routerLinkActive="active">Admin film</a>
+        <a routerLink="/admin/shows" routerLinkActive="active">Admin tider</a>
       }
-      <a routerLink="/admin/shows" routerLinkActive="active">Tider</a>
     }
   </div>
 

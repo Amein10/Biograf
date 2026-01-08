@@ -20,12 +20,12 @@ export class AdminShowEdit {
   films = computed(() => this.filmService.getFilms());
 
   showId = Number(this.route.snapshot.paramMap.get('id'));
-  show: Show | null = this.showService.getShowById(this.showId);
+  show = this.showService.getShowById(this.showId);
 
   model: Show | null = this.show
     ? {
         ...this.show,
-        startTime: new Date(this.show.startTime).toISOString().slice(0, 16),
+        startTime: this.toDateTimeLocal(this.show.startTime),
       }
     : null;
 
@@ -42,5 +42,11 @@ export class AdminShowEdit {
 
     this.showService.update(updated);
     this.router.navigateByUrl('/admin/shows');
+  }
+
+  private toDateTimeLocal(iso: string): string {
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
   }
 }

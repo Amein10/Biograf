@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { FilmService } from '../../../services/film';
 import { ShowService, Show } from '../../../services/show.service';
 
@@ -29,12 +29,17 @@ export class AdminShowList {
 
   formatDate(iso: string): string {
     const d = new Date(iso);
-    return d.toLocaleString('da-DK', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleString('da-DK', {
+      weekday: 'short',
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   }
 
   deleteShow(id: number) {
-    const ok = confirm('Slet denne tid?');
-    if (!ok) return;
+    if (!confirm('Slet denne tid?')) return;
     this.showService.delete(id);
   }
 }

@@ -47,6 +47,7 @@ export const routes: Routes = [
 },
 
   // ADMIN SHOWS (tider)
+  // ADMIN - Tider (Shows)
   {
     path: 'admin/shows',
     canActivate: [adminGuard],
@@ -65,6 +66,7 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/admin/admin-show-edit/admin-show-edit').then(m => m.AdminShowEdit),
   },
+
 
 
   { path: '**', redirectTo: '' },
