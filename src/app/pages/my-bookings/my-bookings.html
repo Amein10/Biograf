@@ -1,8 +1,28 @@
 <div class="page">
-  <h2>Mine bookings</h2>
-
-  <div class="card">
-    <p>(Placeholder) Her viser vi dine bookings senere.</p>
-    <a class="btn" routerLink="/film">Find en film</a>
+  <div class="header">
+    <h2>Mine bookings</h2>
+    <a class="btn" routerLink="/film">Find film</a>
   </div>
+
+  @if (bookings.length === 0) {
+    <p>Du har ingen bookings endnu.</p>
+  } @else {
+    <div class="list">
+      @for (b of bookings; track b.id) {
+        <div class="card">
+          <div class="title">
+            <strong>{{ b.filmTitle }}</strong>
+            <span class="muted">{{ formatDate(b.startTime) }} · {{ b.auditorium }}</span>
+          </div>
+
+          <div><strong>Sæder:</strong> {{ b.seats.join(', ') }}</div>
+          <div class="muted"><strong>Total:</strong> {{ b.totalPrice }} kr</div>
+
+          <div class="actions">
+            <button type="button" class="btn danger" (click)="deleteBooking(b.id)">Slet</button>
+          </div>
+        </div>
+      }
+    </div>
+  }
 </div>

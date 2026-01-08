@@ -39,5 +39,12 @@ export const routes: Routes = [
         .then(m => m.AdminFilmEdit)
   },
 
+  {
+  path: 'shows/:showId/seats',
+  canActivate: [authGuard],
+  loadComponent: () =>
+    import('./pages/seat-select/seat-select').then(m => m.SeatSelect),
+},
+
   { path: '**', redirectTo: '' },
 ];

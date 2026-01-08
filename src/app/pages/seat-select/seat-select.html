@@ -1,0 +1,50 @@
+<div class="page">
+  @if (!show) {
+    <h2>Show ikke fundet</h2>
+    <a class="btn" routerLink="/film">← Tilbage</a>
+  } @else {
+    <div class="header">
+      <div>
+        <h2>Vælg sæder</h2>
+        <div class="muted">
+          <strong>{{ filmTitle }}</strong> · {{ formatDate(show.startTime) }} · {{ show.auditorium }}
+        </div>
+      </div>
+      <a class="btn" routerLink="/film">← Film</a>
+    </div>
+
+    <div class="legend">
+      <span class="chip free">Ledig</span>
+      <span class="chip selected">Valgt</span>
+      <span class="chip booked">Optaget</span>
+    </div>
+
+    <div class="screen">Lærred</div>
+
+    <div class="grid">
+      @for (seat of seats; track seat.code) {
+        <button
+          type="button"
+          class="seat"
+          [class.booked]="seat.isBooked"
+          [class.selected]="seat.isSelected"
+          (click)="toggleSeat(seat.code)"
+          [disabled]="seat.isBooked"
+        >
+          {{ seat.code }}
+        </button>
+      }
+    </div>
+
+    <div class="summary">
+      <div>
+        <div><strong>Valgte sæder:</strong> {{ selectedList.join(', ') || '-' }}</div>
+        <div class="muted"><strong>Total:</strong> {{ totalPrice }} kr</div>
+      </div>
+
+      <button class="btn primary" type="button" (click)="confirmBooking()" [disabled]="selectedList.length === 0">
+        Bekræft booking
+      </button>
+    </div>
+  }
+</div>
