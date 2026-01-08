@@ -1,56 +1,161 @@
-.wrapper {
-  padding: 1.25rem;
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
 }
 
-.top {
+/* ---------- HEADER ---------- */
+
+.film-detail .top {
   display: flex;
+  justify-content: space-between;
   align-items: flex-start;
-  justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
-h2 {
+.film-detail h2 {
   margin: 0;
-}
-
-.meta {
-  margin: 0.3rem 0 0;
-  color: var(--muted);
-}
-
-.section {
-  margin-top: 1.25rem;
-}
-
-.show-list {
-  display: grid;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-}
-
-.show-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-
-  padding: 0.85rem;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: #fafafa;
-}
-
-.show-left {
-  display: grid;
-  gap: 0.2rem;
-}
-
-.show-time {
+  font-size: 2rem;
   font-weight: 700;
 }
 
-.show-sub {
-  color: var(--muted);
-  font-size: 0.9rem;
+.meta {
+  margin-top: 0.3rem;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.muted {
+  opacity: 0.7;
+}
+
+/* ---------- SHOW LIST ---------- */
+
+.shows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* ---------- SHOW CARD ---------- */
+
+.show-card {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 14px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.show-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.show-time {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* ---------- BUTTONS ---------- */
+
+.btn {
+  padding: 0.45rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #222;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  background: #f5f5f5;
+}
+
+.btn.primary {
+  background: #111;
+  color: #fff;
+  border-color: #111;
+}
+
+.btn.primary:hover {
+  background: #000;
+}
+
+/* ---------- STATES ---------- */
+
+.not-found {
+  text-align: center;
+  padding: 3rem 1rem;
+}
+
+.not-found h2 {
+  margin-bottom: 0.5rem;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 600px) {
+  .film-detail .top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .show-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .show-card .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* ===== Skeleton loader ===== */
+.sk {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e7e7e7 37%, #f0f0f0 63%);
+  background-size: 400% 100%;
+  animation: sk 1.2s ease-in-out infinite;
+  border-radius: 10px;
+}
+
+.sk-title {
+  height: 28px;
+  width: 320px;
+  max-width: 70vw;
+}
+
+.sk-line {
+  height: 14px;
+  width: 240px;
+  max-width: 65vw;
+  margin-top: 10px;
+}
+
+.sk-btn {
+  height: 38px;
+  width: 120px;
+  border-radius: 10px;
+}
+
+@keyframes sk {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+.btn.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 }

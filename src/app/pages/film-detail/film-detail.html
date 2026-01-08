@@ -1,44 +1,50 @@
 <div class="page">
-  @if (film$ | async; as film) {
+  @if (loadingMovie) {
+    <p>Henter film...</p>
+  } @else if (!movie) {
+    <section class="not-found">
+      <h2>Film ikke fundet</h2>
+      @if (errorMovie) { <p class="error">{{ errorMovie }}</p> }
+      <a class="btn" routerLink="/film">← Tilbage til film</a>
+    </section>
+  } @else {
     <section class="film-detail">
       <div class="top">
         <div>
-          <h2>{{ film.titel }} <span class="muted">({{ film.aar }})</span></h2>
-          <p class="meta"><strong>Genre:</strong> {{ film.genre }}</p>
+          <h2>{{ movie.title }} <span class="muted">({{ movie.durationMinutes }} min)</span></h2>
+          <p class="meta"><strong>Genre:</strong> {{ genresText(movie) }}</p>
         </div>
-
         <a class="btn" routerLink="/film">← Tilbage</a>
       </div>
 
-      <p class="desc"><strong>Beskrivelse:</strong> {{ film.beskrivelse }}</p>
-
       <h3>Tider</h3>
 
-      @if (shows$ | async; as shows) {
-        @if (shows.length === 0) {
-          <p>Ingen tider endnu.</p>
-        } @else {
-          <div class="shows">
-            @for (s of shows; track s.id) {
-              <div class="show-card">
-                <div>
-                  <div class="show-time">{{ formatDate(s.startTime) }}</div>
-                  <div class="muted">{{ s.auditoriumName }} · {{ s.price }} kr</div>
-                </div>
-
-                <a class="btn primary" [routerLink]="['/shows', s.id, 'seats']">
-                  Vælg sæder
-                </a>
+      @if (loadingShows) {
+        <p>Henter tider...</p>
+      } @else if (shows.length === 0) {
+        <p>Ingen tider endnu.</p>
+        @if (errorShows) { <p class="error">{{ errorShows }}</p> }
+      } @else {
+        <div class="shows">
+          @for (s of shows; track s.id) {
+            <div class="show-card">
+              <div>
+                <div class="show-time">{{ formatDate(s.startTime) }}</div>
+                <div class="muted">{{ s.auditoriumName }} · {{ s.price }} kr</div>
               </div>
-            }
-          </div>
-        }
+
+<a
+  class="btn primary"
+  [class.disabled]="isPastShow(s)"
+  [attr.aria-disabled]="isPastShow(s)"
+  [routerLink]="isPastShow(s) ? null : ['/shows', s.id, 'seats']"
+>
+  {{ isPastShow(s) ? 'Udløbet' : 'Vælg sæder' }}
+</a>
+            </div>
+          }
+        </div>
       }
-    </section>
-  } @else {
-    <section class="not-found">
-      <h2>Film ikke fundet</h2>
-      <a class="btn" routerLink="/film">← Tilbage til film</a>
     </section>
   }
 </div>
