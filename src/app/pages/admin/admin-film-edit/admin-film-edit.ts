@@ -15,15 +15,17 @@ export class AdminFilmEdit {
   error = '';
   saving = false;
 
+  private filmId = 0;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private filmService: FilmService
   ) {
-    const filmId = Number(this.route.snapshot.paramMap.get('id'));
+    this.filmId = Number(this.route.snapshot.paramMap.get('id'));
 
-    this.filmService.getFilmById(filmId).subscribe({
-      next: f => (this.film = { ...f }), // kopi så du ikke ændrer før gem
+    this.filmService.getFilmById(this.filmId).subscribe({
+      next: (f) => (this.film = { ...f }), // kopi så du ikke ændrer før gem
       error: () => (this.film = null),
     });
   }
@@ -46,7 +48,8 @@ export class AdminFilmEdit {
       genre: this.film.genre.trim(),
     };
 
-    this.filmService.updateFilm(updated).subscribe({
+    // ✅ FilmService.updateFilm kræver (id, film)
+    this.filmService.updateFilm(this.filmId, updated).subscribe({
       next: () => {
         this.saving = false;
         this.router.navigateByUrl('/admin/film');

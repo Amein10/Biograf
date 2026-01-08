@@ -1,26 +1,23 @@
 <div class="page">
   <div class="header">
-    <h2>Aktuelle film</h2>
+    <h2>Film</h2>
   </div>
 
-  @if (loading) {
-    <p>Henter film…</p>
-  } @else if (error) {
-    <p style="color:red;">{{ error }}</p>
-  } @else if (filmListe.length === 0) {
-    <p>Der er ingen film at vise.</p>
-  } @else {
-    <div class="film-grid">
-      @for (film of filmListe; track film.id) {
-        <article class="film-card">
-          <a class="card-link" [routerLink]="['/film', film.id]">
-            <h3>{{ film.titel }} <span class="muted">({{ film.aar }})</span></h3>
-            <p class="desc">{{ film.beskrivelse }}</p>
-            <small class="muted">Genre: {{ film.genre }}</small>
-            <div class="cta">Se detaljer →</div>
+  @if (films$ | async; as films) {
+    @if (films.length === 0) {
+      <p>Ingen film fundet.</p>
+    } @else {
+      <div class="grid">
+        @for (f of films; track f.id) {
+          <a class="card" [routerLink]="['/film', f.id]">
+            <h3>{{ f.titel }}</h3>
+            <div class="muted">{{ f.genre || 'Ukendt genre' }}</div>
+            <div class="muted">{{ f.beskrivelse }}</div>
           </a>
-        </article>
-      }
-    </div>
+        }
+      </div>
+    }
+  } @else {
+    <p>Loader film...</p>
   }
 </div>
