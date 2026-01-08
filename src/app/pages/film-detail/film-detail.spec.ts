@@ -1,23 +1,13 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed } from '@angular/core/testing';
 import { FilmDetail } from './film-detail';
 
 describe('FilmDetail', () => {
-  let component: FilmDetail;
-  let fixture: ComponentFixture<FilmDetail>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [FilmDetail]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(FilmDetail);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
   it('should create', () => {
-    expect(component).toBeTruthy();
+    TestBed.configureTestingModule({
+      imports: [FilmDetail],
+    });
+
+    const fixture = TestBed.createComponent(FilmDetail);
+    expect(fixture.componentInstance).toBeTruthy();
   });
 });

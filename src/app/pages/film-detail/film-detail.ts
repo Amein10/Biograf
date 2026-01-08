@@ -1,17 +1,16 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FilmService, Film } from '../../services/film';
-import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-film-detail',
   standalone: true,
-  imports: [NgIf],
+  imports: [RouterLink],
   templateUrl: './film-detail.html',
-  styleUrl: './film-detail.css'
+  styleUrl: './film-detail.css',
 })
 export class FilmDetail {
-  film?: Film | null;
+  film: Film | null = null;
 
   constructor(
     private route: ActivatedRoute,

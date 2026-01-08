@@ -1,15 +1,26 @@
-<div *ngIf="film; else notFound" class="film-detail">
+<div class="page">
+  @if (film) {
+    <section class="film-detail">
+      <div class="top">
+        <div>
+          <h2>{{ film.titel }} <span class="muted">({{ film.aar }})</span></h2>
+          <p class="meta"><strong>Genre:</strong> {{ film.genre }}</p>
+        </div>
 
-  <h2>{{ film.titel }} ({{ film.aar }})</h2>
+        <a class="btn" routerLink="/film">← Tilbage</a>
+      </div>
 
-  <p><strong>Beskrivelse:</strong> {{ film.beskrivelse }}</p>
-  <p><strong>Genre:</strong> {{ film.genre }}</p>
+      <p class="desc"><strong>Beskrivelse:</strong> {{ film.beskrivelse }}</p>
 
-  <button routerLink="/film">Tilbage til film</button>
-
+      <!-- NÆSTE STEP: her kommer "Vælg tid" (shows) + knap til seat-select -->
+      <div class="hint">
+        <strong>Næste:</strong> Her tilføjer vi tider (shows) og “Vælg sæde”.
+      </div>
+    </section>
+  } @else {
+    <section class="not-found">
+      <h2>Film ikke fundet</h2>
+      <a class="btn" routerLink="/film">← Tilbage til film</a>
+    </section>
+  }
 </div>
-
-<ng-template #notFound>
-  <h2>Film ikke fundet</h2>
-  <button routerLink="/film">Tilbage</button>
-</ng-template>

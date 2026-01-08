@@ -1,14 +1,13 @@
 import { Component } from '@angular/core';
-import { NgFor } from '@angular/common';
-import { RouterLink } from '@angular/router';   // <-- IMPORTER DETTE
+import { RouterLink } from '@angular/router';
 import { FilmService, Film } from '../../services/film';
 
 @Component({
   selector: 'app-film-list',
   standalone: true,
-  imports: [NgFor, RouterLink],   // <-- OG TILFØJ DET HER
+  imports: [RouterLink],
   templateUrl: './film-list.html',
-  styleUrl: './film-list.css'
+  styleUrl: './film-list.css',
 })
 export class FilmList {
   filmListe: Film[] = [];

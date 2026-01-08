@@ -1,11 +1,27 @@
-<h2>Aktuelle film</h2>
+<div class="page">
+  <div class="header">
+    <h2>Aktuelle film</h2>
+  </div>
 
-<div class="film-grid">
-  <article class="film-card" *ngFor="let film of filmListe">
-    <a [routerLink]="['/film', film.id]">
-      <h3>{{ film.titel }} ({{ film.aar }})</h3>
-      <p>{{ film.beskrivelse }}</p>
-      <small>Genre: {{ film.genre }}</small>
-    </a>
-  </article>
+  @if (filmListe.length === 0) {
+    <p>Der er ingen film at vise.</p>
+  } @else {
+    <div class="film-grid">
+      @for (film of filmListe; track film.id) {
+        <article class="film-card">
+          <a class="card-link" [routerLink]="['/film', film.id]">
+            <h3>
+              {{ film.titel }}
+              <span class="muted">({{ film.aar }})</span>
+            </h3>
+
+            <p class="desc">{{ film.beskrivelse }}</p>
+            <small class="muted">Genre: {{ film.genre }}</small>
+
+            <div class="cta">Se detaljer →</div>
+          </a>
+        </article>
+      }
+    </div>
+  }
 </div>
