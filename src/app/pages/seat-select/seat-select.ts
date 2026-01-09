@@ -8,7 +8,19 @@ import { ShowService } from '../../services/show.service';
 import { BookingService } from '../../services/booking.service';
 import { ShowDto } from '../../services/api-dtos';
 
-type Seat = { seatId: number; code: string; isSelected: boolean };
+type SeatStatusDto = {
+  seatId: number;
+  row: string;
+  number: number;
+  isBooked: boolean;
+};
+
+type SeatVM = {
+  seatId: number;
+  code: string;
+  isBooked: boolean;
+  isSelected: boolean;
+};
 
 @Component({
   selector: 'app-seat-select',
@@ -27,41 +39,39 @@ export class SeatSelect {
   showId = Number(this.route.snapshot.paramMap.get('showId'));
   show$: Observable<ShowDto> = this.showService.getById(this.showId);
 
-  // mock seats (indtil vi har Seat endpoints)
-  rows = ['A', 'B', 'C', 'D', 'E', 'F'];
-  cols = Array.from({ length: 10 }, (_, i) => i + 1);
-
-  selected = new Set<number>(); // seatId
-  seats: Seat[] = [];
+  seats: SeatVM[] = [];
+  selected = new Set<number>();
 
   constructor() {
-    this.buildSeats();
+    this.loadSeats();
   }
 
-  private buildSeats() {
-    const all: Seat[] = [];
-    let seatId = 1;
-
-    for (const r of this.rows) {
-      for (const c of this.cols) {
-        const code = `${r}${c}`;
-        all.push({
-          seatId,
-          code,
-          isSelected: this.selected.has(seatId),
-        });
-        seatId++;
-      }
-    }
-
-    this.seats = all;
+  private loadSeats() {
+    this.showService.getSeats(this.showId).subscribe({
+      next: (seats: SeatStatusDto[]) => {
+        this.seats = seats.map(s => ({
+          seatId: s.seatId,
+          code: `${s.row}${s.number}`,
+          isBooked: s.isBooked,
+          isSelected: this.selected.has(s.seatId),
+        }));
+      },
+      error: () => alert('Kunne ikke hente sæder fra API'),
+    });
   }
 
   toggleSeat(seatId: number) {
+    const seat = this.seats.find(s => s.seatId === seatId);
+    if (!seat || seat.isBooked) return;
+
     if (this.selected.has(seatId)) this.selected.delete(seatId);
     else this.selected.add(seatId);
 
-    this.buildSeats();
+    this.seats = this.seats.map(s =>
+      s.seatId === seatId
+        ? { ...s, isSelected: this.selected.has(seatId) }
+        : s
+    );
   }
 
   get selectedCount(): number {
@@ -69,11 +79,11 @@ export class SeatSelect {
   }
 
   selectedCodesText(): string {
-    const codes = this.seats
-      .filter(seat => this.selected.has(seat.seatId))
-      .map(seat => seat.code)
-      .sort();
-    return codes.length ? codes.join(', ') : '-';
+    return this.seats
+      .filter(s => this.selected.has(s.seatId))
+      .map(s => s.code)
+      .sort()
+      .join(', ') || '-';
   }
 
   confirmBooking(show: ShowDto) {
@@ -85,16 +95,18 @@ export class SeatSelect {
       return;
     }
 
-    const seatIds = Array.from(this.selected.values()).sort((a, b) => a - b);
+    const seatIds = Array.from(this.selected.values());
     if (seatIds.length === 0) return;
 
     this.bookingService.create({ showId: show.id, seatIds }).subscribe({
       next: () => {
         alert('Booking oprettet!');
+        this.selected.clear();
+        this.loadSeats();
         this.router.navigateByUrl('/my-bookings');
       },
       error: () =>
-        alert('Kunne ikke oprette booking. Er du logget ind, og kører API?'),
+        alert('Kunne ikke oprette booking (tjek login + API)'),
     });
   }
 

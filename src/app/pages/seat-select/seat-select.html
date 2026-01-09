@@ -1,5 +1,6 @@
 <div class="page">
   @if (show$ | async; as show) {
+
     <div class="header">
       <div>
         <h2>Vælg sæder</h2>
@@ -9,15 +10,17 @@
           · {{ show.auditoriumName }}
         </div>
       </div>
+
       <a class="btn" routerLink="/film">← Film</a>
     </div>
 
     <div class="legend">
       <span class="chip free">Ledig</span>
       <span class="chip selected">Valgt</span>
+      <span class="chip booked">Optaget</span>
     </div>
 
-    <div class="screen">Lærred</div>
+    <div class="screen">LÆRRED</div>
 
     <div class="grid">
       @for (seat of seats; track seat.seatId) {
@@ -25,6 +28,8 @@
           type="button"
           class="seat"
           [class.selected]="seat.isSelected"
+          [class.booked]="seat.isBooked"
+          [disabled]="seat.isBooked"
           (click)="toggleSeat(seat.seatId)"
         >
           {{ seat.code }}
@@ -53,6 +58,7 @@
         Bekræft booking
       </button>
     </div>
+
   } @else {
     <h2>Show ikke fundet</h2>
     <a class="btn" routerLink="/film">← Tilbage</a>

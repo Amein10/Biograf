@@ -65,4 +65,12 @@ export class ShowService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  getSeats(showId: number) {
+  return this.http.get<
+    { seatId: number; row: string; number: number; isBooked: boolean }[]
+  >(`/api/Shows/${showId}/seats`);
+}
+
+  
 }
