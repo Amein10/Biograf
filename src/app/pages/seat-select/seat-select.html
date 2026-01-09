@@ -14,10 +14,31 @@
       <a class="btn" routerLink="/film">← Film</a>
     </div>
 
+    <!-- Legend -->
     <div class="legend">
-      <span class="chip free">Ledig</span>
-      <span class="chip selected">Valgt</span>
-      <span class="chip booked">Optaget</span>
+      <span
+        class="chip free"
+        [class.active]="hasAvailableSeats"
+        title="Der findes ledige sæder"
+      >
+        Ledig
+      </span>
+
+      <span
+        class="chip selected"
+        [class.active]="hasSelectedSeats"
+        title="Du har valgt sæder"
+      >
+        Valgt
+      </span>
+
+      <span
+        class="chip booked"
+        [class.active]="isFullyBooked"
+        title="Alle sæder er optaget"
+      >
+        Optaget
+      </span>
     </div>
 
     <div class="screen">LÆRRED</div>
@@ -30,6 +51,7 @@
           [class.selected]="seat.isSelected"
           [class.booked]="seat.isBooked"
           [disabled]="seat.isBooked"
+          [attr.title]="seatTitle(seat)"
           (click)="toggleSeat(seat.seatId)"
         >
           {{ seat.code }}

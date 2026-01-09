@@ -46,9 +46,31 @@ export class SeatSelect {
     this.loadSeats();
   }
 
+  // -------- Legend state --------
+
+  get hasAvailableSeats(): boolean {
+    return this.seats.some(s => !s.isBooked);
+  }
+
+  get hasSelectedSeats(): boolean {
+    return this.selected.size > 0;
+  }
+
+  get isFullyBooked(): boolean {
+    return this.seats.length > 0 && this.seats.every(s => s.isBooked);
+  }
+
+  // -------- Data load --------
+
   private loadSeats() {
     this.showService.getSeats(this.showId).subscribe({
       next: (seats: SeatStatusDto[]) => {
+        // Hvis et sæde er blevet booked siden sidst -> fjern det fra selected
+        const bookedIds = new Set(seats.filter(s => s.isBooked).map(s => s.seatId));
+        for (const id of Array.from(this.selected)) {
+          if (bookedIds.has(id)) this.selected.delete(id);
+        }
+
         this.seats = seats.map(s => ({
           seatId: s.seatId,
           code: `${s.row}${s.number}`,
@@ -67,24 +89,36 @@ export class SeatSelect {
     if (this.selected.has(seatId)) this.selected.delete(seatId);
     else this.selected.add(seatId);
 
-    this.seats = this.seats.map(s =>
-      s.seatId === seatId
-        ? { ...s, isSelected: this.selected.has(seatId) }
-        : s
-    );
+    // Opdater hele listen så UI altid er konsistent
+    this.seats = this.seats.map(s => ({
+      ...s,
+      isSelected: this.selected.has(s.seatId),
+    }));
   }
+
+  // -------- UI helpers --------
 
   get selectedCount(): number {
     return this.selected.size;
   }
 
   selectedCodesText(): string {
-    return this.seats
-      .filter(s => this.selected.has(s.seatId))
-      .map(s => s.code)
-      .sort()
-      .join(', ') || '-';
+    return (
+      this.seats
+        .filter(s => this.selected.has(s.seatId))
+        .map(s => s.code)
+        .sort()
+        .join(', ') || '-'
+    );
   }
+
+  seatTitle(seat: SeatVM): string {
+    if (seat.isBooked) return 'Optaget';
+    if (seat.isSelected) return 'Valgt';
+    return 'Ledig';
+  }
+
+  // -------- Booking --------
 
   confirmBooking(show: ShowDto) {
     if (!this.auth.isLoggedIn()) {
@@ -105,8 +139,7 @@ export class SeatSelect {
         this.loadSeats();
         this.router.navigateByUrl('/my-bookings');
       },
-      error: () =>
-        alert('Kunne ikke oprette booking (tjek login + API)'),
+      error: () => alert('Kunne ikke oprette booking (tjek login + API)'),
     });
   }
 
