@@ -5,6 +5,11 @@ import { Observable, tap } from 'rxjs';
 export interface AuthResponseDto {
   userId: number;
   username: string;
+
+  // ✅ kan komme som "role" (camelcase) eller "Role" (PascalCase)
+  role?: string;
+  Role?: string;
+
   token: string;
 }
 
@@ -21,6 +26,7 @@ export interface RegisterDto {
 export interface AuthUser {
   userId: number;
   username: string;
+  role: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -60,24 +66,35 @@ export class AuthService {
   getUser(): AuthUser | null {
     const raw = localStorage.getItem(this.USER_KEY);
     if (!raw) return null;
+
     try {
-      return JSON.parse(raw) as AuthUser;
+      const parsed = JSON.parse(raw) as Partial<AuthUser>;
+      return {
+        userId: Number(parsed.userId),
+        username: String(parsed.username ?? ''),
+        role: String((parsed as any).role ?? 'Customer'),
+      };
     } catch {
       return null;
     }
   }
 
-  /**
-   * Din API sender ikke roles endnu.
-   * Derfor returnerer vi null.
-   * (Du kan senere decode JWT og læse en role-claim her.)
-   */
   getRole(): string | null {
-    return null;
+    return this.getUser()?.role ?? null;
+  }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'Admin';
   }
 
   private persistAuth(res: AuthResponseDto): void {
+    // ✅ tager både role og Role, fallback til Customer
+    const role = (res.role ?? res.Role ?? 'Customer').trim() || 'Customer';
+
     localStorage.setItem(this.TOKEN_KEY, res.token);
-    localStorage.setItem(this.USER_KEY, JSON.stringify({ userId: res.userId, username: res.username }));
+    localStorage.setItem(
+      this.USER_KEY,
+      JSON.stringify({ userId: res.userId, username: res.username, role })
+    );
   }
 }

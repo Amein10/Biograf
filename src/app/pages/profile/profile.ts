@@ -11,5 +11,11 @@ import { AuthService } from '../../services/auth.service';
 })
 export class Profile {
   private auth = inject(AuthService);
+
   user = computed(() => this.auth.getUser());
+
+  roleLabel = computed(() => {
+    const role = this.user()?.role ?? 'Customer';
+    return role === 'Admin' ? 'Admin' : 'Kunde';
+  });
 }
