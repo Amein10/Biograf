@@ -13,13 +13,13 @@ export class Navbar {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  user = computed(() => this.auth.getUser());
-
-  // Din API har ikke roles -> bliver false (admin links skjules)
-  isAdmin = computed(() => this.auth.getRole() === 'Admin');
+  user = computed(() => this.auth.user());
+  isAdmin = computed(() => this.auth.isAdmin());
 
   logout() {
     this.auth.logout();
-    this.router.navigateByUrl('/');
+
+    // ✅ optional: gå til login eller film - dit valg
+    this.router.navigateByUrl('/login');
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 
@@ -6,7 +6,7 @@ export interface AuthResponseDto {
   userId: number;
   username: string;
 
-  // ✅ kan komme som "role" (camelcase) eller "Role" (PascalCase)
+  // API kan sende Role som PascalCase
   role?: string;
   Role?: string;
 
@@ -36,6 +36,12 @@ export class AuthService {
   private readonly TOKEN_KEY = 'token';
   private readonly USER_KEY = 'auth_user';
 
+  // ✅ central state
+  private _user = signal<AuthUser | null>(this.readUserFromStorage());
+
+  // ✅ signal til components der vil være reactive
+  user = computed(() => this._user());
+
   constructor(private http: HttpClient) {}
 
   login(dto: LoginDto): Observable<AuthResponseDto> {
@@ -53,17 +59,46 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
+
+    // ✅ trigger UI update
+    this._user.set(null);
+  }
+
+  // ✅ BACKWARDS COMPATIBLE: dine gamle filer kalder getUser()
+  getUser(): AuthUser | null {
+    return this._user();
   }
 
   isLoggedIn(): boolean {
-    return !!this.getToken();
+    // mere robust end kun token
+    return !!this._user();
   }
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
-  getUser(): AuthUser | null {
+  getRole(): string | null {
+    return this._user()?.role ?? null;
+  }
+
+  isAdmin(): boolean {
+    return this.getRole() === 'Admin';
+  }
+
+  private persistAuth(res: AuthResponseDto): void {
+    const role = (res.role ?? res.Role ?? 'Customer').trim() || 'Customer';
+
+    localStorage.setItem(this.TOKEN_KEY, res.token);
+
+    const user: AuthUser = { userId: res.userId, username: res.username, role };
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+
+    // ✅ trigger UI update
+    this._user.set(user);
+  }
+
+  private readUserFromStorage(): AuthUser | null {
     const raw = localStorage.getItem(this.USER_KEY);
     if (!raw) return null;
 
@@ -77,24 +112,5 @@ export class AuthService {
     } catch {
       return null;
     }
-  }
-
-  getRole(): string | null {
-    return this.getUser()?.role ?? null;
-  }
-
-  isAdmin(): boolean {
-    return this.getRole() === 'Admin';
-  }
-
-  private persistAuth(res: AuthResponseDto): void {
-    // ✅ tager både role og Role, fallback til Customer
-    const role = (res.role ?? res.Role ?? 'Customer').trim() || 'Customer';
-
-    localStorage.setItem(this.TOKEN_KEY, res.token);
-    localStorage.setItem(
-      this.USER_KEY,
-      JSON.stringify({ userId: res.userId, username: res.username, role })
-    );
   }
 }

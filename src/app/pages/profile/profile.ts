@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
 export class Profile {
   private auth = inject(AuthService);
 
-  user = computed(() => this.auth.getUser());
+  user = computed(() => this.auth.user());
 
   roleLabel = computed(() => {
     const role = this.user()?.role ?? 'Customer';

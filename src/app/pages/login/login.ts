@@ -24,21 +24,19 @@ export class Login {
     this.error = '';
     this.loading = true;
 
-    this.auth
-      .login({
-        username: this.username.trim(),
-        password: this.password,
-      })
-      .subscribe({
-        next: () => {
-          const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-          this.loading = false;
-          this.router.navigateByUrl(returnUrl || '/film');
-        },
-        error: () => {
-          this.loading = false;
-          this.error = 'Forkert brugernavn eller password';
-        },
-      });
+    this.auth.login({
+      username: this.username.trim(),
+      password: this.password,
+    }).subscribe({
+      next: () => {
+        const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || '/film';
+        this.loading = false;
+        this.router.navigateByUrl(returnUrl);
+      },
+      error: () => {
+        this.loading = false;
+        this.error = 'Forkert brugernavn eller password';
+      },
+    });
   }
 }
