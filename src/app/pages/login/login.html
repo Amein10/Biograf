@@ -36,6 +36,17 @@
 
     <div class="mock">
       <p><strong>Tip:</strong> Brug de users du har registreret i API’et (Auth/register).</p>
+
+      <p style="margin-top: 12px;">
+        Har du ikke en bruger?
+        <a
+          class="link"
+          [routerLink]="['/register']"
+          [queryParams]="{ returnUrl: returnUrl || '/film' }"
+        >
+          Opret en her
+        </a>
+      </p>
     </div>
   </form>
 </div>

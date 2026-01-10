@@ -1,0 +1,44 @@
+<div class="page">
+  <h2>Opret bruger</h2>
+
+  <div class="card">
+    <form (ngSubmit)="onSubmit()">
+      <label>Brugernavn</label>
+      <input
+        type="text"
+        name="username"
+        [(ngModel)]="username"
+        autocomplete="username"
+        required
+      />
+
+      <label>Password</label>
+      <input
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+        autocomplete="new-password"
+        required
+      />
+
+      <label>Gentag password</label>
+      <input
+        type="password"
+        name="confirmPassword"
+        [(ngModel)]="confirmPassword"
+        autocomplete="new-password"
+        required
+      />
+
+      @if (error) {
+        <div class="error">{{ error }}</div>
+      }
+
+      <button class="btn primary" type="submit" [disabled]="loading">
+        {{ loading ? 'Opretter...' : 'Opret bruger' }}
+      </button>
+
+      <a class="btn" routerLink="/login">Har du allerede en bruger? Log ind</a>
+    </form>
+  </div>
+</div>
